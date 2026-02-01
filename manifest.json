@@ -10,7 +10,7 @@
   "theme_color": "#4a9c7e",
   "lang": "es",
   "dir": "ltr",
-  "categories": ["health", "fitness", "lifestyle", "medical"],
+  "categories": ["health", "fitness", "lifestyle"],
   "icons": [
     {
       "src": "icons/icon-72.png",
@@ -93,22 +93,22 @@
     {
       "name": "Respiración 4-7-8",
       "short_name": "4-7-8",
-      "description": "Iniciar ejercicio de respiración 4-7-8 para dormir",
-      "url": "./index.html?mode=478",
+      "description": "Técnica para dormir: inhala 4s, mantén 7s, exhala 8s",
+      "url": "./index.html?mode=relaxing",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
     },
     {
-      "name": "Respiración Coherente",
-      "short_name": "Coherente",
-      "description": "Iniciar respiración coherente 5-5",
-      "url": "./index.html?mode=coherent",
-      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Box Breathing",
-      "short_name": "Box",
-      "description": "Iniciar box breathing 4-4-4-4",
+      "name": "Respiración Caja",
+      "short_name": "Caja",
+      "description": "Box breathing 4-4-4-4 para calmar la mente",
       "url": "./index.html?mode=box",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Respiración Calma",
+      "short_name": "Calma",
+      "description": "Exhalación prolongada para reducir el estrés",
+      "url": "./index.html?mode=calm",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
     }
   ],
