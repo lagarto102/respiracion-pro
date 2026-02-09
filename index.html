@@ -1403,6 +1403,7 @@
         let timeRemaining = 300;
         let timerInterval = null;
         let audioContext = null;
+        let wakeLock = null;
         let ambientEnabled = false;
         let voiceEnabled = false;
         let vibrationEnabled = false;
@@ -1482,6 +1483,36 @@
             document.documentElement.style.setProperty('--phase-color', c.color);
             document.documentElement.style.setProperty('--phase-glow', c.glow);
         }
+
+        // ==================== WAKE LOCK ====================
+        // Prevents screen from turning off during breathing session
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    wakeLock.addEventListener('release', () => {
+                        wakeLock = null;
+                    });
+                } catch (err) {
+                    // Wake lock request failed (low battery, etc.)
+                    console.log('Wake lock not available:', err);
+                }
+            }
+        }
+
+        function releaseWakeLock() {
+            if (wakeLock) {
+                wakeLock.release();
+                wakeLock = null;
+            }
+        }
+
+        // Re-acquire wake lock when page becomes visible again
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible' && isRunning && !wakeLock) {
+                await requestWakeLock();
+            }
+        });
 
         // ==================== AUDIO ====================
         function initAudio() {
@@ -1944,7 +1975,8 @@
 
         async function startBreathing() {
             initAudio();
-            
+            await requestWakeLock();
+
             // Show countdown
             startBtn.disabled = true;
             await showCountdown();
@@ -2000,8 +2032,9 @@
             
             setPhaseColor('inhale');
             stopAmbientSound();
+            releaseWakeLock();
             speechSynthesis.cancel();
-            
+
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
