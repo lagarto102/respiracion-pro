@@ -1,5 +1,5 @@
-// Respiración Pro - Service Worker v2.3
-const CACHE_NAME = 'respiracion-pro-v2.3';
+// Respiración Pro - Service Worker v3.0
+const CACHE_NAME = 'respiracion-pro-v3.0';
 const OFFLINE_URL = './index.html';
 
 // Archivos a cachear para funcionamiento offline
@@ -17,8 +17,7 @@ const ASSETS_TO_CACHE = [
   './icons/icon-384.png',
   './icons/icon-512.png',
   './icons/icon-maskable-192.png',
-  './icons/icon-maskable-512.png',
-  'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Work+Sans:wght@300;400;500&display=swap'
+  './icons/icon-maskable-512.png'
 ];
 
 // Instalación del Service Worker
@@ -117,42 +116,6 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
-  }
-});
-
-// Notificaciones push (preparado para futuro uso)
-self.addEventListener('push', (event) => {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.body || '¡Es hora de tu sesión de respiración!',
-      icon: './icons/icon-192.png',
-      badge: './icons/icon-72.png',
-      vibrate: [100, 50, 100],
-      data: {
-        dateOfArrival: Date.now(),
-        primaryKey: 1
-      },
-      actions: [
-        { action: 'start', title: 'Comenzar', icon: './icons/icon-72.png' },
-        { action: 'dismiss', title: 'Después' }
-      ]
-    };
-    
-    event.waitUntil(
-      self.registration.showNotification(data.title || 'Respiración Pro', options)
-    );
-  }
-});
-
-// Manejar click en notificación
-self.addEventListener('notificationclick', (event) => {
-  event.notification.close();
-  
-  if (event.action === 'start') {
-    event.waitUntil(
-      clients.openWindow('./')
-    );
   }
 });
 

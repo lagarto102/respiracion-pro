@@ -1,138 +1,78 @@
-# Respiración Pro PWA
+# Respiración Pro
 
-Una aplicación web progresiva (PWA) para ejercicios de respiración guiados.
+Respiración Pro es una app de respiración guiada preparada como PWA y como app Android para Google Play mediante Capacitor.
 
-## Contenido del paquete
+## Estado Play Store V1
 
-```
-respiracion-pwa/
-├── index.html          # App principal
-├── manifest.json       # Configuración PWA
-├── sw.js              # Service Worker (funcionamiento offline)
-├── INSTRUCCIONES.md   # Guía para usuarios
-├── README.md          # Este archivo
-└── icons/             # Iconos de la app
-    ├── icon-72.png
-    ├── icon-96.png
-    ├── icon-128.png
-    ├── icon-144.png
-    ├── icon-152.png
-    ├── icon-192.png
-    ├── icon-384.png
-    ├── icon-512.png
-    ├── icon-maskable-192.png
-    ├── icon-maskable-512.png
-    ├── favicon-16.png
-    ├── favicon-32.png
-    ├── apple-touch-icon.png
-    ├── screenshot-wide.png
-    └── screenshot-narrow.png
-```
+- Nombre público: `Respiración Pro`
+- Android app ID: `com.respiracionpro.app`
+- Modelo de venta: pago único
+- Precio inicial previsto: `1,99 EUR`
+- Idiomas: español e inglés
+- Datos: locales en el dispositivo, sin analítica, anuncios, cuentas ni rastreadores
+- Build Android: GitHub Actions
 
-## Opciones de hosting gratuito
+## Desarrollo web
 
-### 1. GitHub Pages (Recomendado)
+La app web principal sigue estando en la raíz del repo:
 
-**Ventajas:** Gratis, HTTPS automático, fácil de actualizar
+- `index.html`
+- `manifest.json`
+- `sw.js`
+- `privacy.html`
+- `icons/`
 
-1. Crea un repositorio en GitHub (ej: `respiracion-pro`)
-2. Sube todos los archivos de esta carpeta
-3. Ve a Settings → Pages → Source: "main" branch → Save
-4. Tu app estará en: `https://tu-usuario.github.io/respiracion-pro/`
-
-**Comandos:**
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/TU-USUARIO/respiracion-pro.git
-git push -u origin main
-```
-
-### 2. Netlify
-
-**Ventajas:** Drag & drop, dominio personalizado gratis
-
-1. Ve a [netlify.com](https://netlify.com)
-2. Arrastra la carpeta `respiracion-pwa` al panel
-3. ¡Listo! Te da una URL como `random-name.netlify.app`
-
-### 3. Vercel
-
-**Ventajas:** Muy rápido, ideal para apps
-
-1. Ve a [vercel.com](https://vercel.com)
-2. Importa desde GitHub o sube directamente
-3. URL automática: `proyecto.vercel.app`
-
-### 4. Firebase Hosting
-
-**Ventajas:** CDN global de Google
+Para preparar los assets que usa Capacitor:
 
 ```bash
-npm install -g firebase-tools
-firebase login
-firebase init hosting
-firebase deploy
+npm install
+npm run build
 ```
 
-### 5. Servidor propio (Nginx/Apache)
+El comando copia los archivos necesarios a `www/`, que es generado y no se versiona.
 
-Simplemente copia la carpeta al directorio de tu servidor web.
+## Android
 
-**Importante para PWA:** Necesitas HTTPS. Con Let's Encrypt es gratis:
+Sincronizar Android:
+
 ```bash
-sudo certbot --nginx -d tudominio.com
+npm run cap:sync
 ```
 
-## Configuración del servidor
+Abrir en Android Studio:
 
-Si usas tu propio servidor, asegúrate de que sirve los archivos con los MIME types correctos:
-
-```nginx
-# Nginx
-location / {
-    types {
-        application/manifest+json webmanifest json;
-    }
-}
+```bash
+npm run android:open
 ```
 
-```apache
-# Apache (.htaccess)
-AddType application/manifest+json .json
+Generar App Bundle release localmente, si tienes Java/Android SDK y firma configurada:
+
+```bash
+npm run android:bundle
 ```
 
-## Compartir con amigos
+El workflow `.github/workflows/android-release.yml` genera el `.aab` firmado en GitHub Actions cuando se configuran los secretos de firma.
 
-1. Sube la app a cualquiera de las opciones anteriores
-2. Comparte la URL con tus amigos
-3. Envíales el archivo `INSTRUCCIONES.md` para que sepan cómo instalarla
+## Publicación
 
-## Actualizaciones
+La guía operativa está en:
 
-Cuando actualices la app:
+- `docs/PLAY_STORE_CHECKLIST.md`
+- `store-listing/es-ES.md`
+- `store-listing/en-US.md`
+- `store-listing/data-safety.md`
+- `store-listing/closed-test-instructions-es.md`
 
-1. Modifica la versión en `sw.js` (línea `CACHE_NAME`)
-2. Los usuarios recibirán automáticamente un mensaje de actualización
+Assets de tienda:
 
-## Requisitos técnicos
+- `store-assets/feature-graphic.png`
+- `icons/icon-512.png`
+- `icons/screenshot-narrow.png`
+- `icons/screenshot-wide.png`
 
-- **Navegador compatible:** Chrome 67+, Firefox 67+, Safari 11.1+, Edge 79+
-- **HTTPS obligatorio** para instalar como PWA (excepto localhost)
-- **Service Worker** requiere JavaScript habilitado
+## Privacidad
 
-## Características de la PWA
+La app no recopila datos personales. Las estadísticas, preferencias y patrones personalizados se guardan localmente en el dispositivo del usuario.
 
-- ✅ Instalable en Android/iOS/Desktop
-- ✅ Funciona offline
-- ✅ Iconos adaptativos (Android)
-- ✅ Splash screen automático
-- ✅ Shortcuts desde la pantalla de inicio
-- ✅ Tema claro/oscuro automático
-- ✅ Compartible por URL
+Contacto de soporte previsto: `respiracionpro.app@gmail.com`.
 
-## Licencia
-
-Uso personal y entre amigos. Creado por Andreas Falk.

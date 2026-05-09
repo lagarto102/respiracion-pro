@@ -1,15 +1,15 @@
-# 🧘 Respiración Pro - Guía de Instalación
+# Respiración Pro - Guía de instalación
 
 ## ¿Qué es esta app?
 
 **Respiración Pro** es una aplicación de ejercicios de respiración guiados que funciona completamente offline. Incluye:
 
-- 🌬️ **Técnicas científicamente probadas**: 4-7-8 (para dormir), Box Breathing (usado por Navy SEALs), respiración coherente, y más
-- 🎵 **Sonidos ambientales**: Lluvia, bosque, olas del mar, viento
-- 🗣️ **Guía de voz** en español
-- 📊 **Estadísticas** de tus sesiones
-- 🌙 **Modo oscuro/claro**
-- ⌨️ **Atajos de teclado**: Espacio para iniciar/pausar, Esc para detener
+- **Rutinas guiadas**: 4-7-8, respiración cuadrada, calma, modo libre y patrón personalizado.
+- **Sonidos ambientales**: lluvia, bosque, olas del mar y viento, generados en el dispositivo.
+- **Guía de voz** en español e inglés.
+- **Estadísticas locales** de tus sesiones.
+- **Modo oscuro/claro**.
+- **Atajos de teclado**: Espacio para iniciar/pausar, Esc para detener.
 
 ---
 
@@ -64,19 +64,22 @@
 - **No recopila datos** - todo se guarda localmente en tu dispositivo
 - **Ligera**: menos de 500KB
 - **Compatible** con cualquier navegador moderno
+- **Sin anuncios, analítica ni rastreadores**
 
 ---
 
 ## 💡 Consejos de uso
 
-### Para dormir mejor:
-Usa el modo **4-7-8** (Relajante) antes de acostarte. Esta técnica activa el sistema nervioso parasimpático y reduce la ansiedad.
+### Para bajar revoluciones antes de dormir:
+Usa el modo **4-7-8** (Relajante) antes de acostarte y acompaña el ritmo sin forzar la respiración.
 
 ### Para concentrarte:
-Usa **Box Breathing** (Caja) durante 5 minutos. Es la técnica que usan los Navy SEALs para mantener la calma bajo presión.
+Usa **Box Breathing** (Caja) durante 5 minutos como pausa estructurada antes de volver a una tarea.
 
-### Para reducir estrés inmediato:
-El modo **Calma** (5-0-7) con exhalación prolongada activa la respuesta de relajación del cuerpo en segundos.
+### Para una pausa lenta:
+El modo **Calma** (5-0-7) usa una exhalación más larga para ayudarte a practicar de forma estable.
+
+> Esta app es una herramienta de bienestar general. No sustituye consejo, diagnóstico ni tratamiento médico.
 
 ### Atajos útiles:
 - **Espacio**: Iniciar/Pausar
@@ -104,6 +107,6 @@ El modo **Calma** (5-0-7) con exhalación prolongada activa la respuesta de rela
 
 ## 📧 Contacto
 
-Creado por Andreas Falk · falk@falklobel.com
+Soporte: respiracionpro.app@gmail.com
 
-¡Que disfrutes tus sesiones de respiración! 🧘‍♂️
+Que disfrutes tus sesiones de respiración.
