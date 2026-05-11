@@ -1,7 +1,7 @@
 {
   "name": "Respiración Pro",
   "short_name": "Respira",
-  "description": "Ejercicios de respiración guiados para relajación, concentración y bienestar. Técnicas 4-7-8, coherente, box breathing y más.",
+  "description": "Ejercicios de respiración guiados para relajación, concentración y bienestar diario. Técnicas 4-7-8, coherente, box breathing y más.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -93,21 +93,21 @@
     {
       "name": "Respiración 4-7-8",
       "short_name": "4-7-8",
-      "description": "Técnica para dormir: inhala 4s, mantén 7s, exhala 8s",
+      "description": "Ritmo suave para bajar revoluciones: inhala 4s, mantén 7s, exhala 8s",
       "url": "./index.html?mode=relaxing",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
     },
     {
       "name": "Respiración Caja",
       "short_name": "Caja",
-      "description": "Box breathing 4-4-4-4 para calmar la mente",
+      "description": "Box breathing 4-4-4-4 para recuperar ritmo y atención",
       "url": "./index.html?mode=box",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
     },
     {
       "name": "Respiración Calma",
       "short_name": "Calma",
-      "description": "Exhalación prolongada para reducir el estrés",
+      "description": "Exhalación prolongada para una práctica lenta y estable",
       "url": "./index.html?mode=calm",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
     }

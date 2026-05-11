@@ -6,7 +6,7 @@
     <title>Respiración Pro</title>
     
     <!-- PWA Meta Tags -->
-    <meta name="description" content="Ejercicios de respiración guiados para relajación, concentración y bienestar. Técnicas 4-7-8, coherente, box breathing y más.">
+    <meta name="description" content="Ejercicios de respiración guiados para relajación, concentración y bienestar diario. Técnicas 4-7-8, coherente, box breathing y más.">
     <meta name="theme-color" content="#0a0f14" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#f5f7f6" media="(prefers-color-scheme: light)">
     <meta name="mobile-web-app-capable" content="yes">
@@ -29,10 +29,6 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png">
     <link rel="mask-icon" href="./icons/icon-512.png" color="#4a9c7e">
     
-    <!-- Preconnect for fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -82,7 +78,7 @@
         }
 
         body {
-            font-family: 'Work Sans', -apple-system, sans-serif;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
@@ -129,7 +125,7 @@
         }
 
         .header h1 {
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: Georgia, "Times New Roman", serif;
             font-size: 28px;
             font-weight: 300;
             letter-spacing: 2px;
@@ -139,6 +135,12 @@
         .header-controls {
             display: flex;
             gap: 8px;
+        }
+
+        .lang-btn {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0;
         }
 
         .icon-btn {
@@ -227,7 +229,7 @@
         }
 
         .countdown-number {
-            font-family: 'Work Sans', -apple-system, sans-serif;
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             font-size: 160px;
             font-weight: 300;
             color: var(--accent);
@@ -343,7 +345,7 @@
         }
 
         .breath-text {
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: Georgia, "Times New Roman", serif;
             font-size: 32px;
             font-weight: 300;
             color: var(--phase-color);
@@ -390,7 +392,7 @@
         }
 
         .time-left {
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: Georgia, "Times New Roman", serif;
             font-size: 56px;
             font-weight: 300;
             color: var(--text-primary);
@@ -424,7 +426,7 @@
             border: none;
             padding: 16px 48px;
             border-radius: 40px;
-            font-family: 'Work Sans', sans-serif;
+            font-family: inherit;
             font-size: 15px;
             font-weight: 500;
             letter-spacing: 2px;
@@ -484,7 +486,7 @@
         }
 
         .card h3 {
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: Georgia, "Times New Roman", serif;
             font-size: 15px;
             font-weight: 400;
             margin-bottom: 16px;
@@ -766,7 +768,7 @@
         }
 
         .stat-value {
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: Georgia, "Times New Roman", serif;
             font-size: 32px;
             font-weight: 400;
             color: var(--text-primary);
@@ -857,7 +859,7 @@
         }
 
         .modal-header h2 {
-            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-family: Georgia, "Times New Roman", serif;
             font-size: 24px;
             font-weight: 400;
         }
@@ -1107,13 +1109,14 @@
         <header class="header">
             <h1>Respiración Pro</h1>
             <div class="header-controls">
-                <button class="icon-btn" id="themeToggle" title="Cambiar tema">
+                <button class="icon-btn lang-btn" id="languageToggle" type="button" title="Switch to English" aria-label="Switch to English">EN</button>
+                <button class="icon-btn" id="themeToggle" type="button" title="Cambiar tema" aria-label="Cambiar tema" data-i18n-title="title.theme" data-i18n-aria="title.theme">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="5"/>
                         <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
                     </svg>
                 </button>
-                <button class="icon-btn" id="helpBtn" title="Atajos de teclado">
+                <button class="icon-btn" id="helpBtn" type="button" title="Atajos de teclado" aria-label="Atajos de teclado" data-i18n-title="title.help" data-i18n-aria="title.help">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/>
                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
@@ -1127,7 +1130,7 @@
             <section class="breathing-section">
                 <div class="countdown-overlay" id="countdown">
                     <div class="countdown-number" id="countdownNumber">3</div>
-                    <div class="countdown-text">Prepárate</div>
+                    <div class="countdown-text" data-i18n="countdown.ready">Prepárate</div>
                 </div>
 
                 <div class="breathing-circle">
@@ -1138,9 +1141,9 @@
                             <circle class="progress" cx="150" cy="150" r="140" id="progressCircle"/>
                         </svg>
                         <div class="breath-indicator">
-                            <div class="breath-text" id="breathText">Preparado</div>
+                            <div class="breath-text" id="breathText" aria-live="polite">Preparado</div>
                             <div class="phase-timer" id="phaseTimer">0</div>
-                            <div class="breath-count" id="breathCount">Ciclo <span id="breathCountNum">0</span></div>
+                            <div class="breath-count" id="breathCount"><span id="breathCountLabel">Ciclo</span> <span id="breathCountNum">0</span></div>
                         </div>
                     </div>
                 </div>
@@ -1151,80 +1154,80 @@
                 </div>
 
                 <div class="control-buttons">
-                    <button class="start-btn" id="startBtn">Comenzar</button>
+                    <button class="start-btn" id="startBtn" type="button">Comenzar</button>
                 </div>
 
                 <div class="keyboard-hint">
-                    <kbd>Espacio</kbd> iniciar/pausar · <kbd>Esc</kbd> detener
+                    <kbd data-i18n="keyboard.space">Espacio</kbd> <span data-i18n="keyboard.startPause">iniciar/pausar</span> · <kbd>Esc</kbd> <span data-i18n="keyboard.stop">detener</span>
                 </div>
             </section>
 
             <aside class="sidebar">
                 <div class="card">
-                    <h3>Modo de respiración</h3>
+                    <h3 data-i18n="section.mode">Modo de respiración</h3>
                     <div class="mode-grid" id="modeGrid">
-                        <button class="mode-btn active" data-mode="relaxing">
+                        <button class="mode-btn active" type="button" data-mode="relaxing">
                             <span class="mode-name">Relajante</span>
                             <span class="mode-pattern">4-7-8</span>
                         </button>
-                        <button class="mode-btn" data-mode="box">
+                        <button class="mode-btn" type="button" data-mode="box">
                             <span class="mode-name">Caja</span>
                             <span class="mode-pattern">4-4-4-4</span>
                         </button>
-                        <button class="mode-btn" data-mode="energizing">
+                        <button class="mode-btn" type="button" data-mode="energizing">
                             <span class="mode-name">Energizante</span>
                             <span class="mode-pattern">4-0-4</span>
                         </button>
-                        <button class="mode-btn" data-mode="calm">
+                        <button class="mode-btn" type="button" data-mode="calm">
                             <span class="mode-name">Calma</span>
                             <span class="mode-pattern">5-0-7</span>
                         </button>
-                        <button class="mode-btn" data-mode="free">
+                        <button class="mode-btn" type="button" data-mode="free">
                             <span class="mode-name">Libre</span>
                             <span class="mode-pattern">∞</span>
                         </button>
-                        <button class="mode-btn" data-mode="custom">
+                        <button class="mode-btn" type="button" data-mode="custom">
                             <span class="mode-name">Personalizado</span>
                             <span class="mode-pattern">···</span>
                         </button>
                     </div>
                     <div class="mode-description" id="modeDescription">
-                        Técnica 4-7-8: Inhala 4s, mantén 7s, exhala 8s. Ideal para reducir ansiedad y conciliar el sueño.
+                        Técnica 4-7-8: Inhala 4s, mantén 7s, exhala 8s. Un ritmo suave para bajar revoluciones antes de dormir.
                     </div>
                     <div class="custom-form" id="customForm">
                         <div class="custom-row">
                             <div class="custom-field">
-                                <label>Inhalar (s)</label>
-                                <input type="number" id="customInhale" value="4" min="1" max="20">
+                                <label for="customInhale" data-i18n="custom.inhale">Inhalar (s)</label>
+                                <input type="number" id="customInhale" value="4" min="1" max="20" inputmode="numeric">
                             </div>
                             <div class="custom-field">
-                                <label>Mantener (s)</label>
-                                <input type="number" id="customHold" value="4" min="0" max="20">
+                                <label for="customHold" data-i18n="custom.hold">Mantener (s)</label>
+                                <input type="number" id="customHold" value="4" min="0" max="20" inputmode="numeric">
                             </div>
                         </div>
                         <div class="custom-row">
                             <div class="custom-field">
-                                <label>Exhalar (s)</label>
-                                <input type="number" id="customExhale" value="4" min="1" max="20">
+                                <label for="customExhale" data-i18n="custom.exhale">Exhalar (s)</label>
+                                <input type="number" id="customExhale" value="4" min="1" max="20" inputmode="numeric">
                             </div>
                             <div class="custom-field">
-                                <label>Mantener vacío (s)</label>
-                                <input type="number" id="customHoldEmpty" value="0" min="0" max="20">
+                                <label for="customHoldEmpty" data-i18n="custom.holdEmpty">Mantener vacío (s)</label>
+                                <input type="number" id="customHoldEmpty" value="0" min="0" max="20" inputmode="numeric">
                             </div>
                         </div>
                         <div class="custom-field">
-                            <label>Duración (min)</label>
-                            <input type="number" id="customDuration" value="5" min="1" max="60">
+                            <label for="customDuration" data-i18n="custom.duration">Duración (min)</label>
+                            <input type="number" id="customDuration" value="5" min="1" max="60" inputmode="numeric">
                         </div>
                         <div class="custom-actions">
-                            <button class="custom-btn secondary" id="exportPattern">Exportar</button>
-                            <button class="custom-btn primary" id="saveCustom">Guardar</button>
+                            <button class="custom-btn secondary" id="exportPattern" type="button" data-i18n="action.export">Exportar</button>
+                            <button class="custom-btn primary" id="saveCustom" type="button" data-i18n="action.save">Guardar</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3>Audio</h3>
+                    <h3 data-i18n="section.audio">Audio</h3>
                     <div class="audio-settings">
                         <div class="audio-row">
                             <span class="audio-label">
@@ -1233,16 +1236,16 @@
                                     <circle cx="6" cy="18" r="3"/>
                                     <circle cx="18" cy="16" r="3"/>
                                 </svg>
-                                Sonido ambiente
+                                <span data-i18n="audio.ambient">Sonido ambiente</span>
                             </span>
-                            <button class="toggle-btn" id="ambientToggle"></button>
+                            <button class="toggle-btn" id="ambientToggle" type="button" aria-label="Sonido ambiente" data-i18n-aria="audio.ambient"></button>
                         </div>
                         <div class="ambient-selector" id="ambientSelector">
                             <div class="ambient-grid">
-                                <button class="ambient-btn active" data-ambient="rain">🌧️ Lluvia</button>
-                                <button class="ambient-btn" data-ambient="forest">🌲 Bosque</button>
-                                <button class="ambient-btn" data-ambient="waves">🌊 Olas</button>
-                                <button class="ambient-btn" data-ambient="wind">💨 Viento</button>
+                                <button class="ambient-btn active" type="button" data-ambient="rain">Lluvia</button>
+                                <button class="ambient-btn" type="button" data-ambient="forest">Bosque</button>
+                                <button class="ambient-btn" type="button" data-ambient="waves">Olas</button>
+                                <button class="ambient-btn" type="button" data-ambient="wind">Viento</button>
                             </div>
                         </div>
                         <div class="audio-row">
@@ -1252,18 +1255,18 @@
                                     <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
                                     <path d="M12 19v4M8 23h8"/>
                                 </svg>
-                                Guía de voz
+                                <span data-i18n="audio.voice">Guía de voz</span>
                             </span>
-                            <button class="toggle-btn" id="voiceToggle"></button>
+                            <button class="toggle-btn" id="voiceToggle" type="button" aria-label="Guía de voz" data-i18n-aria="audio.voice"></button>
                         </div>
                         <div class="audio-row">
                             <span class="audio-label">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M5 12h14M12 5l7 7-7 7"/>
                                 </svg>
-                                Vibración
+                                <span data-i18n="audio.vibration">Vibración</span>
                             </span>
-                            <button class="toggle-btn" id="vibrationToggle"></button>
+                            <button class="toggle-btn" id="vibrationToggle" type="button" aria-label="Vibración" data-i18n-aria="audio.vibration"></button>
                         </div>
                         <div class="volume-control">
                             <div class="volume-slider" id="volumeSlider">
@@ -1274,24 +1277,24 @@
                 </div>
 
                 <div class="card">
-                    <h3>Hoy</h3>
+                    <h3 data-i18n="section.today">Hoy</h3>
                     <div class="stats-grid">
                         <div class="stat-item">
                             <div class="stat-value" id="todaySessions">0</div>
-                            <div class="stat-label">Sesiones</div>
+                            <div class="stat-label" data-i18n="stats.sessions">Sesiones</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value" id="todayMinutes">0</div>
-                            <div class="stat-label">Minutos</div>
+                            <div class="stat-label" data-i18n="stats.minutes">Minutos</div>
                         </div>
                     </div>
-                    <button class="history-btn" id="historyBtn">
+                    <button class="history-btn" id="historyBtn" type="button">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M3 3v5h5"/>
                             <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/>
                             <path d="M12 7v5l4 2"/>
                         </svg>
-                        Ver historial completo
+                        <span data-i18n="history.viewFull">Ver historial completo</span>
                     </button>
                 </div>
             </aside>
@@ -1302,22 +1305,22 @@
     <div class="modal-overlay" id="historyModal">
         <div class="modal">
             <div class="modal-header">
-                <h2>Historial</h2>
-                <button class="modal-close" id="closeModal">
+                <h2 data-i18n="history.title">Historial</h2>
+                <button class="modal-close" id="closeModal" type="button" aria-label="Cerrar" data-i18n-aria="action.close">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M18 6L6 18M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
             <div class="history-chart">
-                <div class="chart-title">Últimos 7 días</div>
+                <div class="chart-title" data-i18n="history.last7">Últimos 7 días</div>
                 <div class="chart-bars" id="chartBars"></div>
                 <div class="chart-labels" id="chartLabels"></div>
             </div>
             <div class="history-list" id="historyList"></div>
             <div class="export-import">
-                <button class="export-btn" id="exportData">📤 Exportar datos</button>
-                <button class="import-btn" id="importData">📥 Importar</button>
+                <button class="export-btn" id="exportData" type="button" data-i18n="history.exportData">Exportar datos</button>
+                <button class="import-btn" id="importData" type="button" data-i18n="history.importData">Importar</button>
             </div>
         </div>
     </div>
@@ -1330,6 +1333,203 @@
 
     <script>
         // ==================== CONFIG ====================
+        const appText = {
+            es: {
+                'meta.description': 'Ejercicios de respiración guiados para relajación, concentración y bienestar diario. Técnicas 4-7-8, coherente, box breathing y más.',
+                'title.theme': 'Cambiar tema',
+                'title.help': 'Atajos de teclado',
+                'countdown.ready': 'Prepárate',
+                'state.ready': 'Preparado',
+                'state.start': 'Comenzar',
+                'state.stop': 'Detener',
+                'state.completed': 'Completado',
+                'phase.inhale': 'Inhala',
+                'phase.hold': 'Mantén',
+                'phase.exhale': 'Exhala',
+                'phase.holdEmpty': 'Mantén vacío',
+                'cycle': 'Ciclo',
+                'timer.remaining': 'Tiempo restante',
+                'timer.free': 'Modo libre',
+                'keyboard.space': 'Espacio',
+                'keyboard.startPause': 'iniciar/pausar',
+                'keyboard.stop': 'detener',
+                'section.mode': 'Modo de respiración',
+                'section.audio': 'Audio',
+                'section.today': 'Hoy',
+                'custom.inhale': 'Inhalar (s)',
+                'custom.hold': 'Mantener (s)',
+                'custom.exhale': 'Exhalar (s)',
+                'custom.holdEmpty': 'Mantener vacío (s)',
+                'custom.duration': 'Duración (min)',
+                'action.export': 'Exportar',
+                'action.save': 'Guardar',
+                'action.close': 'Cerrar',
+                'audio.ambient': 'Sonido ambiente',
+                'audio.voice': 'Guía de voz',
+                'audio.vibration': 'Vibración',
+                'audio.voiceOn': 'Guía de voz activada',
+                'stats.sessions': 'Sesiones',
+                'stats.minutes': 'Minutos',
+                'history.viewFull': 'Ver historial completo',
+                'history.title': 'Historial',
+                'history.last7': 'Últimos 7 días',
+                'history.exportData': 'Exportar datos',
+                'history.importData': 'Importar',
+                'history.noData': 'Sin datos aún',
+                'toast.patternSaved': 'Patrón guardado',
+                'toast.patternExported': 'Patrón exportado',
+                'toast.dataExported': 'Datos exportados',
+                'toast.patternImported': 'Patrón importado',
+                'toast.dataImported': 'Datos importados',
+                'toast.importError': 'Error al importar',
+                'toast.invalidPattern': 'Revisa los tiempos del patrón',
+                'toast.help': 'Toca el círculo o el botón para comenzar',
+                'toast.update': 'Nueva versión disponible. Recarga para actualizar.',
+                'toast.installed': 'App instalada correctamente',
+                'language.next': 'EN',
+                'language.title': 'Switch to English',
+                'locale': 'es-ES',
+                'data.minutesShort': 'min',
+                'data.sessions': 'sesiones',
+                'data.minutes': 'min'
+            },
+            en: {
+                'meta.description': 'Guided breathing exercises for relaxation, focus, and daily wellbeing. Includes 4-7-8, coherent breathing, box breathing, and more.',
+                'title.theme': 'Change theme',
+                'title.help': 'Keyboard shortcuts',
+                'countdown.ready': 'Get ready',
+                'state.ready': 'Ready',
+                'state.start': 'Start',
+                'state.stop': 'Stop',
+                'state.completed': 'Completed',
+                'phase.inhale': 'Inhale',
+                'phase.hold': 'Hold',
+                'phase.exhale': 'Exhale',
+                'phase.holdEmpty': 'Hold empty',
+                'cycle': 'Cycle',
+                'timer.remaining': 'Time left',
+                'timer.free': 'Free mode',
+                'keyboard.space': 'Space',
+                'keyboard.startPause': 'start/pause',
+                'keyboard.stop': 'stop',
+                'section.mode': 'Breathing mode',
+                'section.audio': 'Audio',
+                'section.today': 'Today',
+                'custom.inhale': 'Inhale (s)',
+                'custom.hold': 'Hold (s)',
+                'custom.exhale': 'Exhale (s)',
+                'custom.holdEmpty': 'Hold empty (s)',
+                'custom.duration': 'Duration (min)',
+                'action.export': 'Export',
+                'action.save': 'Save',
+                'action.close': 'Close',
+                'audio.ambient': 'Ambient sound',
+                'audio.voice': 'Voice guide',
+                'audio.vibration': 'Vibration',
+                'audio.voiceOn': 'Voice guide enabled',
+                'stats.sessions': 'Sessions',
+                'stats.minutes': 'Minutes',
+                'history.viewFull': 'View full history',
+                'history.title': 'History',
+                'history.last7': 'Last 7 days',
+                'history.exportData': 'Export data',
+                'history.importData': 'Import',
+                'history.noData': 'No data yet',
+                'toast.patternSaved': 'Pattern saved',
+                'toast.patternExported': 'Pattern exported',
+                'toast.dataExported': 'Data exported',
+                'toast.patternImported': 'Pattern imported',
+                'toast.dataImported': 'Data imported',
+                'toast.importError': 'Import error',
+                'toast.invalidPattern': 'Check the pattern times',
+                'toast.help': 'Tap the circle or the button to begin',
+                'toast.update': 'New version available. Reload to update.',
+                'toast.installed': 'App installed successfully',
+                'language.next': 'ES',
+                'language.title': 'Cambiar a español',
+                'locale': 'en-US',
+                'data.minutesShort': 'min',
+                'data.sessions': 'sessions',
+                'data.minutes': 'min'
+            }
+        };
+
+        const modeCopy = {
+            es: {
+                relaxing: {
+                    name: 'Relajante',
+                    description: 'Técnica 4-7-8: inhala 4s, mantén 7s, exhala 8s. Un ritmo suave para bajar revoluciones antes de dormir.'
+                },
+                box: {
+                    name: 'Caja',
+                    description: 'Respiración cuadrada: 4s en cada fase. Útil para recuperar ritmo y atención en momentos exigentes.'
+                },
+                energizing: {
+                    name: 'Energizante',
+                    description: 'Respiración equilibrada sin retención. Pensada para una pausa breve y activa durante el día.'
+                },
+                calm: {
+                    name: 'Calma',
+                    description: 'Exhalación prolongada para una práctica lenta y estable cuando necesitas bajar el ritmo.'
+                },
+                free: {
+                    name: 'Libre',
+                    description: 'Meditación sin límite de tiempo. Practica hasta que te sientas listo para terminar.'
+                },
+                custom: {
+                    name: 'Personalizado',
+                    description: 'Crea tu propio patrón de respiración personalizado.'
+                }
+            },
+            en: {
+                relaxing: {
+                    name: 'Relax',
+                    description: '4-7-8 technique: inhale 4s, hold 7s, exhale 8s. A gentle rhythm for winding down before sleep.'
+                },
+                box: {
+                    name: 'Box',
+                    description: 'Box breathing: 4s in each phase. Useful for regaining rhythm and attention in demanding moments.'
+                },
+                energizing: {
+                    name: 'Energize',
+                    description: 'Balanced breathing without holds. Designed as a short, active pause during the day.'
+                },
+                calm: {
+                    name: 'Calm',
+                    description: 'Longer exhales for a slow, steady practice when you want to ease the pace.'
+                },
+                free: {
+                    name: 'Free',
+                    description: 'Untimed meditation. Practice until you feel ready to finish.'
+                },
+                custom: {
+                    name: 'Custom',
+                    description: 'Create your own personalized breathing pattern.'
+                }
+            }
+        };
+
+        const ambientCopy = {
+            es: { rain: 'Lluvia', forest: 'Bosque', waves: 'Olas', wind: 'Viento' },
+            en: { rain: 'Rain', forest: 'Forest', waves: 'Waves', wind: 'Wind' }
+        };
+
+        function initialLanguage() {
+            const saved = localStorage.getItem('language');
+            if (saved === 'es' || saved === 'en') return saved;
+            return navigator.language && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'es';
+        }
+
+        let currentLanguage = initialLanguage();
+
+        function t(key) {
+            return appText[currentLanguage][key] || appText.es[key] || key;
+        }
+
+        function getModeCopy(mode) {
+            return modeCopy[currentLanguage][mode] || modeCopy.es[mode];
+        }
+
         const breathModes = {
             relaxing: {
                 name: 'Relajante',
@@ -1338,7 +1538,7 @@
                 exhale: 8000,
                 holdEmpty: 0,
                 duration: 300,
-                description: 'Técnica 4-7-8: Inhala 4s, mantén 7s, exhala 8s. Ideal para reducir ansiedad y conciliar el sueño.'
+                description: modeCopy.es.relaxing.description
             },
             box: {
                 name: 'Caja',
@@ -1347,7 +1547,7 @@
                 exhale: 4000,
                 holdEmpty: 4000,
                 duration: 300,
-                description: 'Respiración cuadrada: 4s en cada fase. Usada por Navy SEALs para mantener la calma bajo presión.'
+                description: modeCopy.es.box.description
             },
             energizing: {
                 name: 'Energizante',
@@ -1356,7 +1556,7 @@
                 exhale: 4000,
                 holdEmpty: 0,
                 duration: 180,
-                description: 'Respiración rápida y equilibrada sin retención. Aumenta el estado de alerta y energía.'
+                description: modeCopy.es.energizing.description
             },
             calm: {
                 name: 'Calma',
@@ -1365,7 +1565,7 @@
                 exhale: 7000,
                 holdEmpty: 0,
                 duration: 300,
-                description: 'Exhalación prolongada activa el sistema parasimpático. Perfecta para reducir el estrés.'
+                description: modeCopy.es.calm.description
             },
             free: {
                 name: 'Libre',
@@ -1374,7 +1574,7 @@
                 exhale: 6000,
                 holdEmpty: 0,
                 duration: Infinity,
-                description: 'Meditación sin límite de tiempo. Practica hasta que te sientas listo para terminar.'
+                description: modeCopy.es.free.description
             },
             custom: {
                 name: 'Personalizado',
@@ -1383,7 +1583,7 @@
                 exhale: 4000,
                 holdEmpty: 0,
                 duration: 300,
-                description: 'Crea tu propio patrón de respiración personalizado.'
+                description: modeCopy.es.custom.description
             }
         };
 
@@ -1418,6 +1618,7 @@
         const startBtn = document.getElementById('startBtn');
         const breathText = document.getElementById('breathText');
         const breathCountEl = document.getElementById('breathCount');
+        const breathCountLabel = document.getElementById('breathCountLabel');
         const breathCountNum = document.getElementById('breathCountNum');
         const circleBg = document.getElementById('circleBg');
         const progressCircle = document.getElementById('progressCircle');
@@ -1438,6 +1639,7 @@
         const volumeFill = document.getElementById('volumeFill');
         const todaySessions = document.getElementById('todaySessions');
         const todayMinutes = document.getElementById('todayMinutes');
+        const languageToggle = document.getElementById('languageToggle');
         const themeToggle = document.getElementById('themeToggle');
         const helpBtn = document.getElementById('helpBtn');
         const historyBtn = document.getElementById('historyBtn');
@@ -1482,6 +1684,93 @@
             const c = colors[phase] || colors.inhale;
             document.documentElement.style.setProperty('--phase-color', c.color);
             document.documentElement.style.setProperty('--phase-glow', c.glow);
+        }
+
+        function applyLanguage(lang, persist = true) {
+            currentLanguage = lang === 'en' ? 'en' : 'es';
+            if (persist) {
+                localStorage.setItem('language', currentLanguage);
+            }
+
+            document.documentElement.lang = currentLanguage;
+            document.title = 'Respiración Pro';
+            const metaDescription = document.querySelector('meta[name="description"]');
+            if (metaDescription) {
+                metaDescription.content = t('meta.description');
+            }
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.dataset.i18n);
+            });
+            document.querySelectorAll('[data-i18n-title]').forEach(el => {
+                el.title = t(el.dataset.i18nTitle);
+            });
+            document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+                el.setAttribute('aria-label', t(el.dataset.i18nAria));
+            });
+
+            languageToggle.textContent = t('language.next');
+            languageToggle.title = t('language.title');
+            languageToggle.setAttribute('aria-label', t('language.title'));
+
+            modeBtns.forEach(btn => {
+                const copy = getModeCopy(btn.dataset.mode);
+                const name = btn.querySelector('.mode-name');
+                if (name && copy) name.textContent = copy.name;
+            });
+
+            ambientBtns.forEach(btn => {
+                btn.textContent = ambientCopy[currentLanguage][btn.dataset.ambient];
+            });
+
+            const copy = getModeCopy(currentMode);
+            if (copy) {
+                modeDescription.textContent = copy.description;
+            }
+
+            breathCountLabel.textContent = t('cycle');
+            if (!isRunning) {
+                breathText.textContent = t('state.ready');
+                startBtn.textContent = t('state.start');
+            } else {
+                startBtn.textContent = t('state.stop');
+            }
+            updateTimer();
+        }
+
+        function savePreferences() {
+            const prefs = {
+                ambientEnabled,
+                voiceEnabled,
+                vibrationEnabled,
+                currentAmbient,
+                volume
+            };
+            localStorage.setItem('breathingPreferences', JSON.stringify(prefs));
+        }
+
+        function applyToggleState(button, enabled) {
+            button.classList.toggle('active', enabled);
+        }
+
+        function loadPreferences() {
+            try {
+                const prefs = JSON.parse(localStorage.getItem('breathingPreferences') || '{}');
+                ambientEnabled = Boolean(prefs.ambientEnabled);
+                voiceEnabled = Boolean(prefs.voiceEnabled);
+                vibrationEnabled = Boolean(prefs.vibrationEnabled);
+                currentAmbient = ambientSounds[prefs.currentAmbient] ? prefs.currentAmbient : currentAmbient;
+                volume = Number.isFinite(Number(prefs.volume)) ? Math.max(0, Math.min(1, Number(prefs.volume))) : volume;
+            } catch (err) {
+                // Keep defaults if stored preferences are invalid.
+            }
+
+            applyToggleState(ambientToggle, ambientEnabled);
+            applyToggleState(voiceToggle, voiceEnabled);
+            applyToggleState(vibrationToggle, vibrationEnabled);
+            ambientSelector.classList.toggle('active', ambientEnabled);
+            ambientBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.ambient === currentAmbient));
+            volumeFill.style.width = (volume * 100) + '%';
         }
 
         // ==================== WAKE LOCK ====================
@@ -1732,22 +2021,22 @@
             speechSynthesis.cancel();
             
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'es-ES';
+            utterance.lang = currentLanguage === 'en' ? 'en-US' : 'es-ES';
             utterance.rate = 0.7;      // Slower
             utterance.pitch = 0.7;     // Lower pitch (more grave)
             utterance.volume = volume * 0.8; // Slightly softer
             
             // Try to find a deeper voice
             const voices = speechSynthesis.getVoices();
-            const spanishVoices = voices.filter(v => v.lang.startsWith('es'));
-            if (spanishVoices.length > 0) {
+            const languageVoices = voices.filter(v => v.lang.toLowerCase().startsWith(currentLanguage));
+            if (languageVoices.length > 0) {
                 // Prefer male/deeper voices if available
-                const preferredVoice = spanishVoices.find(v => 
+                const preferredVoice = languageVoices.find(v => 
                     v.name.toLowerCase().includes('male') || 
                     v.name.toLowerCase().includes('jorge') ||
                     v.name.toLowerCase().includes('diego') ||
                     v.name.toLowerCase().includes('carlos')
-                ) || spanishVoices[0];
+                ) || languageVoices[0];
                 utterance.voice = preferredVoice;
             }
             
@@ -1847,10 +2136,10 @@
         function updateTimer() {
             timeLeftEl.textContent = formatTime(timeRemaining);
             if (breathModes[currentMode].duration === Infinity) {
-                timerLabel.textContent = 'Modo libre';
+                timerLabel.textContent = t('timer.free');
                 timerLabel.classList.add('infinite');
             } else {
-                timerLabel.textContent = 'Tiempo restante';
+                timerLabel.textContent = t('timer.remaining');
                 timerLabel.classList.remove('infinite');
             }
         }
@@ -1882,8 +2171,8 @@
             // Inhale
             currentPhase = 'inhale';
             setPhaseColor('inhale');
-            breathText.textContent = 'Inhala';
-            speak('Inhala');
+            breathText.textContent = t('phase.inhale');
+            speak(t('phase.inhale'));
             playChime('start');
             breathCountNum.textContent = breathCount + 1;
             breathText.classList.add('active');
@@ -1904,8 +2193,8 @@
             if (mode.hold > 0) {
                 currentPhase = 'hold';
                 setPhaseColor('hold');
-                breathText.textContent = 'Mantén';
-                speak('Mantén');
+                breathText.textContent = t('phase.hold');
+                speak(t('phase.hold'));
                 playChime('hold');
                 circleBg.className = 'circle-bg hold';
                 playHoldSound(mode.hold);
@@ -1917,8 +2206,8 @@
             // Exhale
             currentPhase = 'exhale';
             setPhaseColor('exhale');
-            breathText.textContent = 'Exhala';
-            speak('Exhala');
+            breathText.textContent = t('phase.exhale');
+            speak(t('phase.exhale'));
             playChime('exhale');
             circleBg.className = 'circle-bg exhale';
             progressCircle.style.transition = `stroke-dashoffset ${mode.exhale}ms linear`;
@@ -1934,8 +2223,8 @@
             if (mode.holdEmpty > 0) {
                 currentPhase = 'hold-empty';
                 setPhaseColor('hold-empty');
-                breathText.textContent = 'Mantén vacío';
-                speak('Mantén');
+                breathText.textContent = t('phase.holdEmpty');
+                speak(t('phase.hold'));
                 playChime('hold');
                 circleBg.className = 'circle-bg hold-empty';
                 playHoldSound(mode.holdEmpty);
@@ -1986,7 +2275,7 @@
                 isRunning = true;
             }
             
-            startBtn.textContent = 'Detener';
+            startBtn.textContent = t('state.stop');
             startBtn.classList.add('active');
             breathText.classList.add('active');
             
@@ -2022,7 +2311,7 @@
             isRunning = false;
             currentPhase = 'idle';
             
-            startBtn.textContent = 'Comenzar';
+            startBtn.textContent = t('state.start');
             startBtn.classList.remove('active');
             breathText.classList.remove('active');
             breathCountEl.classList.remove('active');
@@ -2033,7 +2322,9 @@
             setPhaseColor('inhale');
             stopAmbientSound();
             releaseWakeLock();
-            speechSynthesis.cancel();
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
 
             if (timerInterval) {
                 clearInterval(timerInterval);
@@ -2042,15 +2333,15 @@
             
             if (completed) {
                 updateStats();
-                breathText.textContent = '¡Completado!';
+                breathText.textContent = t('state.completed');
                 breathText.classList.add('active');
                 vibrate([100, 100, 100]);
                 setTimeout(() => {
                     breathText.classList.remove('active');
-                    breathText.textContent = 'Preparado';
+                    breathText.textContent = t('state.ready');
                 }, 3000);
             } else {
-                breathText.textContent = 'Preparado';
+                breathText.textContent = t('state.ready');
             }
             
             const mode = breathModes[currentMode];
@@ -2095,7 +2386,9 @@
             
             // Get last 7 days
             const days = [];
-            const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const dayNames = currentLanguage === 'en'
+                ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                : ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
             
             for (let i = 6; i >= 0; i--) {
                 const date = new Date();
@@ -2115,7 +2408,7 @@
                 const height = (day.data.minutes / maxMinutes) * 100;
                 return `
                     <div class="chart-bar" style="height: ${Math.max(height, 4)}%">
-                        <div class="chart-bar-tooltip">${day.data.minutes} min</div>
+                        <div class="chart-bar-tooltip">${day.data.minutes} ${t('data.minutesShort')}</div>
                     </div>
                 `;
             }).join('');
@@ -2129,7 +2422,7 @@
             historyList.innerHTML = sortedDates.map(date => {
                 const d = stats[date];
                 const dateObj = new Date(date + 'T00:00:00');
-                const formatted = dateObj.toLocaleDateString('es-ES', { 
+                const formatted = dateObj.toLocaleDateString(t('locale'), { 
                     weekday: 'short', 
                     day: 'numeric', 
                     month: 'short' 
@@ -2137,21 +2430,86 @@
                 return `
                     <div class="history-item">
                         <span class="history-date">${formatted}</span>
-                        <span class="history-stats">${d.sessions} sesiones · ${d.minutes} min</span>
+                        <span class="history-stats">${d.sessions} ${t('data.sessions')} · ${d.minutes} ${t('data.minutes')}</span>
                     </div>
                 `;
-            }).join('') || '<div class="history-item"><span class="history-date">Sin datos aún</span></div>';
+            }).join('') || `<div class="history-item"><span class="history-date">${t('history.noData')}</span></div>`;
+        }
+
+        function readClampedNumber(id, fallback, min, max) {
+            const input = document.getElementById(id);
+            const value = Number.parseInt(input.value, 10);
+            const safeValue = Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+            input.value = safeValue;
+            return safeValue;
+        }
+
+        function readCustomPattern() {
+            const pattern = {
+                inhale: readClampedNumber('customInhale', 4, 1, 20),
+                hold: readClampedNumber('customHold', 4, 0, 20),
+                exhale: readClampedNumber('customExhale', 4, 1, 20),
+                holdEmpty: readClampedNumber('customHoldEmpty', 0, 0, 20),
+                duration: readClampedNumber('customDuration', 5, 1, 60)
+            };
+
+            if (pattern.inhale + pattern.hold + pattern.exhale + pattern.holdEmpty <= 0) {
+                showToast(t('toast.invalidPattern'), 'error');
+                return null;
+            }
+
+            return pattern;
+        }
+
+        function applyCustomPattern(pattern, persist = false) {
+            const safePattern = {
+                inhale: Math.min(20, Math.max(1, Number.parseInt(pattern.inhale, 10) || 4)),
+                hold: Math.min(20, Math.max(0, Number.parseInt(pattern.hold, 10) || 0)),
+                exhale: Math.min(20, Math.max(1, Number.parseInt(pattern.exhale, 10) || 4)),
+                holdEmpty: Math.min(20, Math.max(0, Number.parseInt(pattern.holdEmpty, 10) || 0)),
+                duration: Math.min(60, Math.max(1, Number.parseInt(pattern.duration, 10) || 5))
+            };
+
+            document.getElementById('customInhale').value = safePattern.inhale;
+            document.getElementById('customHold').value = safePattern.hold;
+            document.getElementById('customExhale').value = safePattern.exhale;
+            document.getElementById('customHoldEmpty').value = safePattern.holdEmpty;
+            document.getElementById('customDuration').value = safePattern.duration;
+
+            breathModes.custom.inhale = safePattern.inhale * 1000;
+            breathModes.custom.hold = safePattern.hold * 1000;
+            breathModes.custom.exhale = safePattern.exhale * 1000;
+            breathModes.custom.holdEmpty = safePattern.holdEmpty * 1000;
+            breathModes.custom.duration = safePattern.duration * 60;
+
+            if (currentMode === 'custom') {
+                totalTime = breathModes.custom.duration;
+                timeRemaining = breathModes.custom.duration;
+                updateTimer();
+            }
+
+            if (persist) {
+                localStorage.setItem('customPattern', JSON.stringify(safePattern));
+            }
+
+            return safePattern;
+        }
+
+        function loadSavedCustomPattern() {
+            try {
+                const savedPattern = JSON.parse(localStorage.getItem('customPattern') || 'null');
+                if (savedPattern) {
+                    applyCustomPattern(savedPattern, false);
+                }
+            } catch (err) {
+                // Ignore invalid saved custom patterns.
+            }
         }
 
         // ==================== EXPORT/IMPORT ====================
         function exportPattern() {
-            const pattern = {
-                inhale: parseInt(document.getElementById('customInhale').value),
-                hold: parseInt(document.getElementById('customHold').value),
-                exhale: parseInt(document.getElementById('customExhale').value),
-                holdEmpty: parseInt(document.getElementById('customHoldEmpty').value),
-                duration: parseInt(document.getElementById('customDuration').value)
-            };
+            const pattern = readCustomPattern();
+            if (!pattern) return;
             
             const blob = new Blob([JSON.stringify(pattern, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -2161,7 +2519,7 @@
             a.click();
             URL.revokeObjectURL(url);
             
-            showToast('Patrón exportado');
+            showToast(t('toast.patternExported'));
         }
 
         function exportAllData() {
@@ -2179,7 +2537,7 @@
             a.click();
             URL.revokeObjectURL(url);
             
-            showToast('Datos exportados');
+            showToast(t('toast.dataExported'));
         }
 
         function importData(file) {
@@ -2189,21 +2547,18 @@
                     const data = JSON.parse(e.target.result);
                     
                     // Check if it's a pattern or full data
-                    if (data.inhale && data.exhale) {
+                    if (Number.isFinite(Number(data.inhale)) && Number.isFinite(Number(data.exhale))) {
                         // It's a pattern
-                        document.getElementById('customInhale').value = data.inhale;
-                        document.getElementById('customHold').value = data.hold || 0;
-                        document.getElementById('customExhale').value = data.exhale;
-                        document.getElementById('customHoldEmpty').value = data.holdEmpty || 0;
-                        document.getElementById('customDuration').value = data.duration || 5;
+                        applyCustomPattern(data, true);
                         
                         // Select custom mode
                         modeBtns.forEach(b => b.classList.remove('active'));
                         document.querySelector('[data-mode="custom"]').classList.add('active');
                         currentMode = 'custom';
                         customForm.classList.add('active');
+                        modeDescription.textContent = getModeCopy(currentMode).description;
                         
-                        showToast('Patrón importado');
+                        showToast(t('toast.patternImported'));
                     } else if (data.stats) {
                         // It's full data
                         const existingStats = JSON.parse(localStorage.getItem('breathingStats') || '{}');
@@ -2211,10 +2566,10 @@
                         localStorage.setItem('breathingStats', JSON.stringify(mergedStats));
                         loadStats();
                         loadHistory();
-                        showToast('Datos importados');
+                        showToast(t('toast.dataImported'));
                     }
                 } catch (err) {
-                    showToast('Error al importar', 'error');
+                    showToast(t('toast.importError'), 'error');
                 }
             };
             reader.readAsText(file);
@@ -2262,7 +2617,7 @@
                 }
                 
                 const mode = breathModes[currentMode];
-                modeDescription.textContent = mode.description;
+                modeDescription.textContent = getModeCopy(currentMode).description;
                 totalTime = mode.duration;
                 timeRemaining = mode.duration;
                 updateTimer();
@@ -2271,23 +2626,10 @@
 
         // Custom pattern
         saveCustomBtn.addEventListener('click', () => {
-            const inhale = parseInt(document.getElementById('customInhale').value) * 1000;
-            const hold = parseInt(document.getElementById('customHold').value) * 1000;
-            const exhale = parseInt(document.getElementById('customExhale').value) * 1000;
-            const holdEmpty = parseInt(document.getElementById('customHoldEmpty').value) * 1000;
-            const duration = parseInt(document.getElementById('customDuration').value) * 60;
-            
-            breathModes.custom.inhale = inhale;
-            breathModes.custom.hold = hold;
-            breathModes.custom.exhale = exhale;
-            breathModes.custom.holdEmpty = holdEmpty;
-            breathModes.custom.duration = duration;
-            
-            totalTime = duration;
-            timeRemaining = duration;
-            updateTimer();
-            
-            showToast('Patrón guardado');
+            const pattern = readCustomPattern();
+            if (!pattern) return;
+            applyCustomPattern(pattern, true);
+            showToast(t('toast.patternSaved'));
         });
 
         exportPatternBtn.addEventListener('click', exportPattern);
@@ -2306,6 +2648,7 @@
                     stopAmbientSound();
                 }
             }
+            savePreferences();
         });
 
         ambientBtns.forEach(btn => {
@@ -2318,6 +2661,7 @@
                     stopAmbientSound();
                     startAmbientSound();
                 }
+                savePreferences();
             });
         });
 
@@ -2325,8 +2669,9 @@
             voiceEnabled = !voiceEnabled;
             voiceToggle.classList.toggle('active');
             if (voiceEnabled) {
-                speak('Guía de voz activada');
+                speak(t('audio.voiceOn'));
             }
+            savePreferences();
         });
 
         vibrationToggle.addEventListener('click', () => {
@@ -2335,6 +2680,7 @@
             if (vibrationEnabled) {
                 vibrate(100);
             }
+            savePreferences();
         });
 
         // Volume
@@ -2352,6 +2698,7 @@
             if (ambientGain) {
                 ambientGain.gain.value = 0.35 * volume;
             }
+            savePreferences();
         }
 
         volumeSlider.addEventListener('mousedown', (e) => {
@@ -2376,6 +2723,14 @@
 
         document.addEventListener('touchend', () => isDragging = false);
 
+        // Language
+        languageToggle.addEventListener('click', () => {
+            applyLanguage(currentLanguage === 'es' ? 'en' : 'es');
+            if (historyModal.classList.contains('active')) {
+                loadHistory();
+            }
+        });
+
         // Theme
         themeToggle.addEventListener('click', () => {
             const currentTheme = document.body.getAttribute('data-theme');
@@ -2386,7 +2741,7 @@
 
         // Help
         helpBtn.addEventListener('click', () => {
-            showToast('Toca el círculo o el botón para comenzar');
+            showToast(t('toast.help'));
         });
 
         // History modal
@@ -2423,9 +2778,9 @@
         function init() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.body.setAttribute('data-theme', savedTheme);
+            loadPreferences();
+            loadSavedCustomPattern();
             loadStats();
-            updateTimer();
-            volumeFill.style.width = (volume * 100) + '%';
             
             // Manejar parámetros de URL para shortcuts
             const urlParams = new URLSearchParams(window.location.search);
@@ -2437,12 +2792,13 @@
                     modeBtn.classList.add('active');
                     currentMode = modeParam;
                     const mode = breathModes[currentMode];
-                    modeDescription.textContent = mode.description;
+                    modeDescription.textContent = getModeCopy(currentMode).description;
                     totalTime = mode.duration;
                     timeRemaining = mode.duration;
-                    updateTimer();
                 }
             }
+
+            applyLanguage(currentLanguage, false);
         }
 
         // ==================== SERVICE WORKER ====================
@@ -2459,7 +2815,7 @@
                         
                         newWorker.addEventListener('statechange', () => {
                             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                showToast('Nueva versión disponible. Recarga para actualizar.', 'success');
+                                showToast(t('toast.update'), 'success');
                             }
                         });
                     });
@@ -2486,7 +2842,7 @@
 
         window.addEventListener('appinstalled', () => {
             deferredPrompt = null;
-            showToast('¡App instalada correctamente!', 'success');
+            showToast(t('toast.installed'), 'success');
             console.log('✓ App instalada');
         });
 

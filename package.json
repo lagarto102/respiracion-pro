@@ -1,0 +1,21 @@
+{
+  "name": "respiracion-pro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Respiracion Pro: breathing exercises for relaxation, focus, and daily wellbeing.",
+  "scripts": {
+    "build": "node scripts/build-web.mjs",
+    "cap:sync": "npm run build && npx cap sync android",
+    "android:open": "npm run cap:sync && npx cap open android",
+    "android:bundle": "npm run cap:sync && cd android && gradlew.bat bundleRelease",
+    "android:bundle:ci": "npm run cap:sync && cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/core": "^7.4.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.4",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,78 @@
+name: Android release bundle
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: "Version name shown in Google Play"
+        required: true
+        default: "1.0.0"
+      version_code:
+        description: "Integer version code"
+        required: true
+        default: "1"
+  push:
+    branches:
+      - play-ready-v1
+
+jobs:
+  build-aab:
+    runs-on: ubuntu-latest
+    env:
+      VERSION_NAME: ${{ github.event.inputs.version_name || '1.0.0' }}
+      VERSION_CODE: ${{ github.event.inputs.version_code || github.run_number }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure Android release signing
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
+            echo "::error::Missing Android signing secrets. Add ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, and ANDROID_KEY_PASSWORD in GitHub repository secrets."
+            exit 1
+          fi
+
+          printf "%s" "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore
+          {
+            echo "storeFile=app/release.keystore"
+            echo "storePassword=$ANDROID_KEYSTORE_PASSWORD"
+            echo "storeType=jks"
+            echo "keyAlias=$ANDROID_KEY_ALIAS"
+            echo "keyPassword=$ANDROID_KEY_PASSWORD"
+          } > android/keystore.properties
+
+      - name: Build web assets and sync Android
+        run: npm run cap:sync
+
+      - name: Build signed App Bundle
+        working-directory: android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew bundleRelease
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: respiracion-pro-${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}.aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
