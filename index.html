@@ -1107,7 +1107,7 @@
 <body data-theme="dark">
     <div class="app-container">
         <header class="header">
-            <h1>Respiración Pro</h1>
+            <h1 id="appTitle">Respiración Pro</h1>
             <div class="header-controls">
                 <button class="icon-btn lang-btn" id="languageToggle" type="button" title="Switch to English" aria-label="Switch to English">EN</button>
                 <button class="icon-btn" id="themeToggle" type="button" title="Cambiar tema" aria-label="Cambiar tema" data-i18n-title="title.theme" data-i18n-aria="title.theme">
@@ -1176,11 +1176,11 @@
                         </button>
                         <button class="mode-btn" type="button" data-mode="energizing">
                             <span class="mode-name">Energizante</span>
-                            <span class="mode-pattern">4-0-4</span>
+                            <span class="mode-pattern">4-4</span>
                         </button>
                         <button class="mode-btn" type="button" data-mode="calm">
                             <span class="mode-name">Calma</span>
-                            <span class="mode-pattern">5-0-7</span>
+                            <span class="mode-pattern">5-7</span>
                         </button>
                         <button class="mode-btn" type="button" data-mode="free">
                             <span class="mode-name">Libre</span>
@@ -1588,10 +1588,10 @@
         };
 
         const ambientSounds = {
-            rain: { name: 'Lluvia', frequency: 400, q: 0.8 },
-            forest: { name: 'Bosque', frequency: 1200, q: 2.5 },
-            waves: { name: 'Olas', frequency: 250, q: 0.4 },
-            wind: { name: 'Viento', frequency: 600, q: 1.2 }
+            rain: { name: 'Lluvia' },
+            forest: { name: 'Bosque' },
+            waves: { name: 'Olas' },
+            wind: { name: 'Viento' }
         };
 
         // ==================== STATE ====================
@@ -1693,7 +1693,10 @@
             }
 
             document.documentElement.lang = currentLanguage;
-            document.title = 'Respiración Pro';
+            const appName = currentLanguage === 'en' ? 'Breathing Pro' : 'Respiración Pro';
+            document.title = appName;
+            const appTitleEl = document.getElementById('appTitle');
+            if (appTitleEl) appTitleEl.textContent = appName;
             const metaDescription = document.querySelector('meta[name="description"]');
             if (metaDescription) {
                 metaDescription.content = t('meta.description');
@@ -1734,6 +1737,16 @@
                 startBtn.textContent = t('state.start');
             } else {
                 startBtn.textContent = t('state.stop');
+                // Update the current phase text in the new language
+                const phaseKeys = {
+                    'inhale': 'phase.inhale',
+                    'hold': 'phase.hold',
+                    'exhale': 'phase.exhale',
+                    'hold-empty': 'phase.holdEmpty'
+                };
+                if (phaseKeys[currentPhase]) {
+                    breathText.textContent = t(phaseKeys[currentPhase]);
+                }
             }
             updateTimer();
         }
@@ -1813,85 +1826,232 @@
             }
         }
 
-        function startAmbientSound() {
-            if (!audioContext || ambientOscillator) return;
-            
-            const config = ambientSounds[currentAmbient];
-            
-            // Create pink noise (more natural than white noise)
-            const bufferSize = 4 * audioContext.sampleRate;
-            const noiseBuffer = audioContext.createBuffer(2, bufferSize, audioContext.sampleRate);
-            
-            for (let channel = 0; channel < 2; channel++) {
-                const output = noiseBuffer.getChannelData(channel);
-                let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
-                for (let i = 0; i < bufferSize; i++) {
-                    const white = Math.random() * 2 - 1;
-                    b0 = 0.99886 * b0 + white * 0.0555179;
-                    b1 = 0.99332 * b1 + white * 0.0750759;
-                    b2 = 0.96900 * b2 + white * 0.1538520;
-                    b3 = 0.86650 * b3 + white * 0.3104856;
-                    b4 = 0.55000 * b4 + white * 0.5329522;
-                    b5 = -0.7616 * b5 - white * 0.0168980;
-                    output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
-                    b6 = white * 0.115926;
+        function createNoiseBuffer(type, seconds) {
+            const sr = audioContext.sampleRate;
+            const len = seconds * sr;
+            const buf = audioContext.createBuffer(2, len, sr);
+            for (let ch = 0; ch < 2; ch++) {
+                const out = buf.getChannelData(ch);
+                if (type === 'pink') {
+                    let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+                    for (let i = 0; i < len; i++) {
+                        const w = Math.random()*2-1;
+                        b0=0.99886*b0+w*0.0555179; b1=0.99332*b1+w*0.0750759;
+                        b2=0.96900*b2+w*0.1538520; b3=0.86650*b3+w*0.3104856;
+                        b4=0.55000*b4+w*0.5329522; b5=-0.7616*b5-w*0.0168980;
+                        out[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11;
+                        b6=w*0.115926;
+                    }
+                } else if (type === 'brown') {
+                    let last = 0;
+                    for (let i = 0; i < len; i++) {
+                        const w = Math.random()*2-1;
+                        last = (last + 0.02*w) / 1.02;
+                        out[i] = last * 3.5;
+                    }
+                } else {
+                    for (let i = 0; i < len; i++) out[i] = Math.random()*2-1;
                 }
             }
-            
-            const noise = audioContext.createBufferSource();
-            noise.buffer = noiseBuffer;
-            noise.loop = true;
-            
-            // Multiple filters for richer sound
-            const lowpass = audioContext.createBiquadFilter();
-            lowpass.type = 'lowpass';
-            lowpass.frequency.value = config.frequency;
-            lowpass.Q.value = config.q;
-            
-            const highpass = audioContext.createBiquadFilter();
-            highpass.type = 'highpass';
-            highpass.frequency.value = 60;
-            
+            return buf;
+        }
+
+        function startAmbientSound() {
+            if (!audioContext || ambientOscillator) return;
+            const nodes = []; // track all nodes for cleanup
+
             ambientGain = audioContext.createGain();
-            ambientGain.gain.value = 0.35 * volume; // Much louder
-            
-            // Slow modulation for natural variation
-            const lfo = audioContext.createOscillator();
-            const lfoGain = audioContext.createGain();
-            lfo.frequency.value = 0.08;
-            lfoGain.gain.value = config.frequency * 0.15;
-            lfo.connect(lfoGain);
-            lfoGain.connect(lowpass.frequency);
-            lfo.start();
-            
-            // Second LFO for volume variation (waves, wind effect)
-            const lfo2 = audioContext.createOscillator();
-            const lfo2Gain = audioContext.createGain();
-            lfo2.frequency.value = 0.15;
-            lfo2Gain.gain.value = 0.08 * volume;
-            lfo2.connect(lfo2Gain);
-            lfo2Gain.connect(ambientGain.gain);
-            lfo2.start();
-            
-            noise.connect(highpass);
-            highpass.connect(lowpass);
-            lowpass.connect(ambientGain);
+            ambientGain.gain.value = 0;
             ambientGain.connect(audioContext.destination);
-            noise.start();
-            
-            ambientOscillator = { noise, lfo, lfo2 };
+            // Fade in
+            ambientGain.gain.linearRampToValueAtTime(0.35 * volume, audioContext.currentTime + 1.5);
+
+            if (currentAmbient === 'rain') {
+                // RAIN: bright filtered noise + higher crackle layer
+                const base = audioContext.createBufferSource();
+                base.buffer = createNoiseBuffer('pink', 6);
+                base.loop = true;
+                const lp = audioContext.createBiquadFilter();
+                lp.type = 'lowpass'; lp.frequency.value = 1800; lp.Q.value = 0.5;
+                const hp = audioContext.createBiquadFilter();
+                hp.type = 'highpass'; hp.frequency.value = 200; hp.Q.value = 0.3;
+                const g1 = audioContext.createGain(); g1.gain.value = 0.7;
+                base.connect(hp); hp.connect(lp); lp.connect(g1); g1.connect(ambientGain);
+                base.start(); nodes.push(base);
+
+                // Crackle layer (high-passed white noise for raindrop texture)
+                const crackle = audioContext.createBufferSource();
+                crackle.buffer = createNoiseBuffer('white', 6);
+                crackle.loop = true;
+                const chp = audioContext.createBiquadFilter();
+                chp.type = 'highpass'; chp.frequency.value = 4000; chp.Q.value = 0.8;
+                const clp = audioContext.createBiquadFilter();
+                clp.type = 'lowpass'; clp.frequency.value = 9000;
+                const g2 = audioContext.createGain(); g2.gain.value = 0.15;
+                // Modulate crackle intensity
+                const cLfo = audioContext.createOscillator(); cLfo.frequency.value = 0.3;
+                const cLfoG = audioContext.createGain(); cLfoG.gain.value = 0.06;
+                cLfo.connect(cLfoG); cLfoG.connect(g2.gain); cLfo.start(); nodes.push(cLfo);
+                crackle.connect(chp); chp.connect(clp); clp.connect(g2); g2.connect(ambientGain);
+                crackle.start(); nodes.push(crackle);
+
+                // Slow intensity variation
+                const lfo = audioContext.createOscillator(); lfo.frequency.value = 0.05;
+                const lfoG = audioContext.createGain(); lfoG.gain.value = 0.08;
+                lfo.connect(lfoG); lfoG.connect(ambientGain.gain); lfo.start(); nodes.push(lfo);
+
+            } else if (currentAmbient === 'waves') {
+                // WAVES: brown noise with strong, slow volume cycling (ocean rhythm)
+                const base = audioContext.createBufferSource();
+                base.buffer = createNoiseBuffer('brown', 8);
+                base.loop = true;
+                const lp = audioContext.createBiquadFilter();
+                lp.type = 'lowpass'; lp.frequency.value = 600; lp.Q.value = 0.3;
+                const hp = audioContext.createBiquadFilter();
+                hp.type = 'highpass'; hp.frequency.value = 40;
+                const g1 = audioContext.createGain(); g1.gain.value = 0.8;
+                base.connect(hp); hp.connect(lp); lp.connect(g1); g1.connect(ambientGain);
+                base.start(); nodes.push(base);
+
+                // Foam/wash layer (pink noise, higher freq)
+                const foam = audioContext.createBufferSource();
+                foam.buffer = createNoiseBuffer('pink', 8);
+                foam.loop = true;
+                const flp = audioContext.createBiquadFilter();
+                flp.type = 'bandpass'; flp.frequency.value = 2500; flp.Q.value = 0.4;
+                const fg = audioContext.createGain(); fg.gain.value = 0.12;
+                foam.connect(flp); flp.connect(fg); fg.connect(ambientGain);
+                foam.start(); nodes.push(foam);
+
+                // Strong wave rhythm LFO — the key differentiator
+                const waveLfo = audioContext.createOscillator(); waveLfo.frequency.value = 0.08; // ~12s wave cycle
+                const waveG = audioContext.createGain(); waveG.gain.value = 0.18;
+                waveLfo.connect(waveG); waveG.connect(ambientGain.gain); waveLfo.start(); nodes.push(waveLfo);
+
+                // Secondary slower swell
+                const swellLfo = audioContext.createOscillator(); swellLfo.frequency.value = 0.025;
+                const swellG = audioContext.createGain(); swellG.gain.value = 0.10;
+                swellLfo.connect(swellG); swellG.connect(ambientGain.gain); swellLfo.start(); nodes.push(swellLfo);
+
+                // Modulate foam with wave rhythm
+                const foamLfo = audioContext.createOscillator(); foamLfo.frequency.value = 0.08;
+                const foamLfoG = audioContext.createGain(); foamLfoG.gain.value = 0.08;
+                foamLfo.connect(foamLfoG); foamLfoG.connect(fg.gain); foamLfo.start(); nodes.push(foamLfo);
+
+            } else if (currentAmbient === 'wind') {
+                // WIND: mid-freq noise with strong gusting modulation
+                const base = audioContext.createBufferSource();
+                base.buffer = createNoiseBuffer('pink', 6);
+                base.loop = true;
+                const bp = audioContext.createBiquadFilter();
+                bp.type = 'bandpass'; bp.frequency.value = 800; bp.Q.value = 0.6;
+                const lp = audioContext.createBiquadFilter();
+                lp.type = 'lowpass'; lp.frequency.value = 2000;
+                const g1 = audioContext.createGain(); g1.gain.value = 0.6;
+                base.connect(bp); bp.connect(lp); lp.connect(g1); g1.connect(ambientGain);
+                base.start(); nodes.push(base);
+
+                // Whistle layer (narrow bandpass at higher freq)
+                const whistle = audioContext.createBufferSource();
+                whistle.buffer = createNoiseBuffer('white', 6);
+                whistle.loop = true;
+                const wbp = audioContext.createBiquadFilter();
+                wbp.type = 'bandpass'; wbp.frequency.value = 3500; wbp.Q.value = 3.0;
+                const wg = audioContext.createGain(); wg.gain.value = 0.04;
+                whistle.connect(wbp); wbp.connect(wg); wg.connect(ambientGain);
+                whistle.start(); nodes.push(whistle);
+
+                // Gusting: strong, irregular volume changes
+                const gustLfo = audioContext.createOscillator(); gustLfo.frequency.value = 0.12;
+                const gustG = audioContext.createGain(); gustG.gain.value = 0.16;
+                gustLfo.connect(gustG); gustG.connect(ambientGain.gain); gustLfo.start(); nodes.push(gustLfo);
+
+                // Secondary gust at different rate for irregularity
+                const gust2 = audioContext.createOscillator(); gust2.frequency.value = 0.07;
+                const gust2G = audioContext.createGain(); gust2G.gain.value = 0.10;
+                gust2.connect(gust2G); gust2G.connect(ambientGain.gain); gust2.start(); nodes.push(gust2);
+
+                // Frequency sweep for realistic wind howl
+                const sweepLfo = audioContext.createOscillator(); sweepLfo.frequency.value = 0.04;
+                const sweepG = audioContext.createGain(); sweepG.gain.value = 400;
+                sweepLfo.connect(sweepG); sweepG.connect(bp.frequency); sweepLfo.start(); nodes.push(sweepLfo);
+
+                // Whistle intensity modulation
+                const wLfo = audioContext.createOscillator(); wLfo.frequency.value = 0.15;
+                const wLfoG = audioContext.createGain(); wLfoG.gain.value = 0.03;
+                wLfo.connect(wLfoG); wLfoG.connect(wg.gain); wLfo.start(); nodes.push(wLfo);
+
+            } else if (currentAmbient === 'forest') {
+                // FOREST: very gentle brown noise base + mid "rustle" + subtle chirp tones
+                const base = audioContext.createBufferSource();
+                base.buffer = createNoiseBuffer('brown', 6);
+                base.loop = true;
+                const lp = audioContext.createBiquadFilter();
+                lp.type = 'lowpass'; lp.frequency.value = 400; lp.Q.value = 0.3;
+                const g1 = audioContext.createGain(); g1.gain.value = 0.4;
+                base.connect(lp); lp.connect(g1); g1.connect(ambientGain);
+                base.start(); nodes.push(base);
+
+                // Leaf rustle (high-passed pink noise)
+                const rustle = audioContext.createBufferSource();
+                rustle.buffer = createNoiseBuffer('pink', 6);
+                rustle.loop = true;
+                const rbp = audioContext.createBiquadFilter();
+                rbp.type = 'bandpass'; rbp.frequency.value = 3000; rbp.Q.value = 1.0;
+                const rg = audioContext.createGain(); rg.gain.value = 0.06;
+                rustle.connect(rbp); rbp.connect(rg); rg.connect(ambientGain);
+                rustle.start(); nodes.push(rustle);
+
+                // Rustle modulation (intermittent breeze through leaves)
+                const rLfo = audioContext.createOscillator(); rLfo.frequency.value = 0.18;
+                const rLfoG = audioContext.createGain(); rLfoG.gain.value = 0.05;
+                rLfo.connect(rLfoG); rLfoG.connect(rg.gain); rLfo.start(); nodes.push(rLfo);
+
+                // Bird-like tonal chirps (high sine tones, modulated)
+                const bird1 = audioContext.createOscillator(); bird1.type = 'sine'; bird1.frequency.value = 2800;
+                const bird1g = audioContext.createGain(); bird1g.gain.value = 0.015;
+                const birdTrem = audioContext.createOscillator(); birdTrem.frequency.value = 6;
+                const birdTremG = audioContext.createGain(); birdTremG.gain.value = 0.012;
+                birdTrem.connect(birdTremG); birdTremG.connect(bird1g.gain); birdTrem.start(); nodes.push(birdTrem);
+                // Slow on/off for intermittent chirping
+                const birdEnv = audioContext.createOscillator(); birdEnv.frequency.value = 0.25;
+                const birdEnvG = audioContext.createGain(); birdEnvG.gain.value = 0.015;
+                birdEnv.connect(birdEnvG); birdEnvG.connect(bird1g.gain); birdEnv.start(); nodes.push(birdEnv);
+                bird1.connect(bird1g); bird1g.connect(ambientGain); bird1.start(); nodes.push(bird1);
+
+                // Second bird at different pitch
+                const bird2 = audioContext.createOscillator(); bird2.type = 'sine'; bird2.frequency.value = 3800;
+                const bird2g = audioContext.createGain(); bird2g.gain.value = 0.010;
+                const bird2Trem = audioContext.createOscillator(); bird2Trem.frequency.value = 8;
+                const bird2TremG = audioContext.createGain(); bird2TremG.gain.value = 0.008;
+                bird2Trem.connect(bird2TremG); bird2TremG.connect(bird2g.gain); bird2Trem.start(); nodes.push(bird2Trem);
+                const bird2Env = audioContext.createOscillator(); bird2Env.frequency.value = 0.15;
+                const bird2EnvG = audioContext.createGain(); bird2EnvG.gain.value = 0.010;
+                bird2Env.connect(bird2EnvG); bird2EnvG.connect(bird2g.gain); bird2Env.start(); nodes.push(bird2Env);
+                bird2.connect(bird2g); bird2g.connect(ambientGain); bird2.start(); nodes.push(bird2);
+
+                // Very slow overall variation
+                const lfo = audioContext.createOscillator(); lfo.frequency.value = 0.03;
+                const lfoG = audioContext.createGain(); lfoG.gain.value = 0.06;
+                lfo.connect(lfoG); lfoG.connect(ambientGain.gain); lfo.start(); nodes.push(lfo);
+            }
+
+            ambientOscillator = { nodes };
         }
 
         function stopAmbientSound() {
-            if (ambientOscillator) {
-                try {
-                    ambientOscillator.noise.stop();
-                    ambientOscillator.lfo.stop();
-                    ambientOscillator.lfo2.stop();
-                } catch (e) {}
+            if (ambientOscillator && ambientOscillator.nodes) {
+                ambientOscillator.nodes.forEach(n => {
+                    try { n.stop(); } catch (e) {}
+                });
                 ambientOscillator = null;
             }
-            ambientGain = null;
+            if (ambientGain) {
+                try {
+                    ambientGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
+                } catch (e) {}
+                setTimeout(() => { ambientGain = null; }, 400);
+            }
         }
 
         function playBreathSound(phase, duration) {
@@ -2014,39 +2174,63 @@
             noiseSource.stop(now + durationSec);
         }
 
+        // Cache voices once loaded
+        let cachedVoices = [];
+
         function speak(text) {
             if (!voiceEnabled || !('speechSynthesis' in window)) return;
-            
+
             // Cancel any ongoing speech
             speechSynthesis.cancel();
-            
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = currentLanguage === 'en' ? 'en-US' : 'es-ES';
-            utterance.rate = 0.7;      // Slower
-            utterance.pitch = 0.7;     // Lower pitch (more grave)
-            utterance.volume = volume * 0.8; // Slightly softer
-            
-            // Try to find a deeper voice
-            const voices = speechSynthesis.getVoices();
-            const languageVoices = voices.filter(v => v.lang.toLowerCase().startsWith(currentLanguage));
-            if (languageVoices.length > 0) {
-                // Prefer male/deeper voices if available
-                const preferredVoice = languageVoices.find(v => 
-                    v.name.toLowerCase().includes('male') || 
-                    v.name.toLowerCase().includes('jorge') ||
-                    v.name.toLowerCase().includes('diego') ||
-                    v.name.toLowerCase().includes('carlos')
-                ) || languageVoices[0];
-                utterance.voice = preferredVoice;
-            }
-            
-            speechSynthesis.speak(utterance);
+
+            // Small delay after cancel — Android WebView bug where speak() after cancel() is silently ignored
+            setTimeout(() => {
+                if (!voiceEnabled) return;
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = currentLanguage === 'en' ? 'en-US' : 'es-ES';
+                utterance.rate = 0.75;
+                utterance.pitch = 0.7;
+                utterance.volume = Math.min(1.0, volume * 1.0); // Full volume for voice
+
+                // Use cached voices or fetch fresh
+                const voices = cachedVoices.length > 0 ? cachedVoices : speechSynthesis.getVoices();
+                const langCode = currentLanguage === 'en' ? 'en' : 'es';
+                const languageVoices = voices.filter(v =>
+                    v.lang.toLowerCase().startsWith(langCode) ||
+                    v.lang.toLowerCase().replace('_', '-').startsWith(langCode)
+                );
+                if (languageVoices.length > 0) {
+                    const preferredVoice = languageVoices.find(v => {
+                        const n = v.name.toLowerCase();
+                        return n.includes('male') || n.includes('jorge') ||
+                               n.includes('diego') || n.includes('carlos') ||
+                               n.includes('google') || n.includes('enhanced');
+                    }) || languageVoices[0];
+                    utterance.voice = preferredVoice;
+                }
+
+                // Workaround: Android sometimes needs a resume before speak
+                speechSynthesis.resume();
+                speechSynthesis.speak(utterance);
+
+                // Android bug: speechSynthesis can pause itself after ~15s. Keep it alive.
+                let keepAlive = setInterval(() => {
+                    if (!speechSynthesis.speaking) {
+                        clearInterval(keepAlive);
+                    } else {
+                        speechSynthesis.resume();
+                    }
+                }, 5000);
+            }, 50);
         }
-        
-        // Pre-load voices
+
+        // Pre-load and cache voices
         if ('speechSynthesis' in window) {
-            speechSynthesis.getVoices();
-            speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+            cachedVoices = speechSynthesis.getVoices();
+            speechSynthesis.onvoiceschanged = () => {
+                cachedVoices = speechSynthesis.getVoices();
+            };
         }
 
         function playChime(type = 'start') {

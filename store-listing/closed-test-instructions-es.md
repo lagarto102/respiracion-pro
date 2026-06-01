@@ -15,7 +15,6 @@ Durante la prueba cerrada:
    - revisar historial
    - exportar/importar datos si puedes
    - abrirla sin conexión
-5. Envía comentarios a `respiracionpro.app@gmail.com`.
+5. Envía comentarios a `respiracionproapp@gmail.com`.
 
 No hace falta compartir datos personales ni información de salud.
-

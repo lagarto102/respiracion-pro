@@ -33,5 +33,4 @@ Respiración Pro es una herramienta de bienestar general. No sustituye consejo, 
 
 ## Contacto de soporte
 
-respiracionpro.app@gmail.com
-
+respiracionproapp@gmail.com

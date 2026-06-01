@@ -6,7 +6,7 @@
 2. Si es cuenta nueva personal, completar verificación de identidad y verificación con dispositivo Android.
 3. Pagar la tasa única de registro de Google Play.
 4. Crear perfil de pagos para vender la app.
-5. Crear un Gmail público de soporte: `respiracionpro.app@gmail.com`.
+5. Crear un Gmail público de soporte: `respiracionproapp@gmail.com`.
 
 ## 2. App en Play Console
 
@@ -96,4 +96,3 @@ Cuando Play permita producción:
 2. Corregir cualquier crash o warning grave.
 3. Publicar con rollout gradual si está disponible.
 4. Vigilar reseñas y feedback durante la primera semana.
-

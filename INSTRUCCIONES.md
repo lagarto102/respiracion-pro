@@ -107,6 +107,6 @@ El modo **Calma** (5-0-7) usa una exhalación más larga para ayudarte a practic
 
 ## 📧 Contacto
 
-Soporte: respiracionpro.app@gmail.com
+Soporte: respiracionproapp@gmail.com
 
 Que disfrutes tus sesiones de respiración.

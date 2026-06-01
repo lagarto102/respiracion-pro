@@ -33,5 +33,4 @@ EUR 1.99
 
 ## Support contact
 
-respiracionpro.app@gmail.com
-
+respiracionproapp@gmail.com

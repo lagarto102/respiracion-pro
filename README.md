@@ -74,5 +74,4 @@ Assets de tienda:
 
 La app no recopila datos personales. Las estadísticas, preferencias y patrones personalizados se guardan localmente en el dispositivo del usuario.
 
-Contacto de soporte previsto: `respiracionpro.app@gmail.com`.
-
+Contacto de soporte previsto: `respiracionproapp@gmail.com`.

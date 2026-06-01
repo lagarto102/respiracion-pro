@@ -1,5 +1,5 @@
-// Respiración Pro - Service Worker v3.0
-const CACHE_NAME = 'respiracion-pro-v3.0';
+// Respiración Pro - Service Worker v3.1
+const CACHE_NAME = 'respiracion-pro-v3.1';
 const OFFLINE_URL = './index.html';
 
 // Archivos a cachear para funcionamiento offline
