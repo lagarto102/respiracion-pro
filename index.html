@@ -643,6 +643,23 @@
             justify-content: space-between;
         }
 
+        .audio-row.audio-master {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-primary);
+        }
+
+        .audio-row.audio-master.active {
+            border-color: var(--accent);
+            background: var(--accent-muted);
+        }
+
+        .audio-row.audio-master .audio-label {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
         .audio-label {
             font-size: 13px;
             color: var(--text-secondary);
@@ -734,6 +751,14 @@
         /* Volume Slider */
         .volume-control {
             margin-top: 8px;
+        }
+
+        .volume-control.muted {
+            opacity: 0.45;
+        }
+
+        .volume-control.muted .volume-fill {
+            background: var(--text-muted);
         }
 
         .volume-slider {
@@ -1229,6 +1254,17 @@
                 <div class="card">
                     <h3 data-i18n="section.audio">Audio</h3>
                     <div class="audio-settings">
+                        <div class="audio-row audio-master" id="silenceRow">
+                            <span class="audio-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 5 6 9H3v6h3l5 4V5z"/>
+                                    <path d="M22 9l-6 6"/>
+                                    <path d="M16 9l6 6"/>
+                                </svg>
+                                <span data-i18n="audio.silenceAll">Silencio total</span>
+                            </span>
+                            <button class="toggle-btn" id="silenceToggle" type="button" aria-label="Silencio total" data-i18n-aria="audio.silenceAll"></button>
+                        </div>
                         <div class="audio-row">
                             <span class="audio-label">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1262,13 +1298,23 @@
                         <div class="audio-row">
                             <span class="audio-label">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 12c2-4 4-4 6 0s4 4 6 0 4-4 6 0"/>
+                                    <path d="M4 17c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/>
+                                </svg>
+                                <span data-i18n="audio.guideSounds">Sonidos de respiración</span>
+                            </span>
+                            <button class="toggle-btn" id="guideSoundsToggle" type="button" aria-label="Sonidos de respiración" data-i18n-aria="audio.guideSounds"></button>
+                        </div>
+                        <div class="audio-row">
+                            <span class="audio-label">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M5 12h14M12 5l7 7-7 7"/>
                                 </svg>
                                 <span data-i18n="audio.vibration">Vibración</span>
                             </span>
                             <button class="toggle-btn" id="vibrationToggle" type="button" aria-label="Vibración" data-i18n-aria="audio.vibration"></button>
                         </div>
-                        <div class="volume-control">
+                        <div class="volume-control" id="volumeControl">
                             <div class="volume-slider" id="volumeSlider">
                                 <div class="volume-fill" id="volumeFill"></div>
                             </div>
@@ -1364,8 +1410,10 @@
                 'action.export': 'Exportar',
                 'action.save': 'Guardar',
                 'action.close': 'Cerrar',
+                'audio.silenceAll': 'Silencio total',
                 'audio.ambient': 'Sonido ambiente',
                 'audio.voice': 'Guía de voz',
+                'audio.guideSounds': 'Sonidos de respiración',
                 'audio.vibration': 'Vibración',
                 'audio.voiceOn': 'Guía de voz activada',
                 'stats.sessions': 'Sesiones',
@@ -1423,8 +1471,10 @@
                 'action.export': 'Export',
                 'action.save': 'Save',
                 'action.close': 'Close',
+                'audio.silenceAll': 'Full silence',
                 'audio.ambient': 'Ambient sound',
                 'audio.voice': 'Voice guide',
+                'audio.guideSounds': 'Breathing sounds',
                 'audio.vibration': 'Vibration',
                 'audio.voiceOn': 'Voice guide enabled',
                 'stats.sessions': 'Sessions',
@@ -1606,10 +1656,12 @@
         let wakeLock = null;
         let ambientEnabled = false;
         let voiceEnabled = false;
+        let guideSoundsEnabled = true;
         let vibrationEnabled = false;
         let volume = 0.85;
         let ambientOscillator = null;
         let ambientGain = null;
+        let guideAudioNodes = [];
         let currentPhase = 'idle';
         let phaseTimeRemaining = 0;
         let phaseInterval = null;
@@ -1630,11 +1682,15 @@
         const customForm = document.getElementById('customForm');
         const saveCustomBtn = document.getElementById('saveCustom');
         const exportPatternBtn = document.getElementById('exportPattern');
+        const silenceRow = document.getElementById('silenceRow');
+        const silenceToggle = document.getElementById('silenceToggle');
         const ambientToggle = document.getElementById('ambientToggle');
         const ambientSelector = document.getElementById('ambientSelector');
         const ambientBtns = document.querySelectorAll('.ambient-btn');
         const voiceToggle = document.getElementById('voiceToggle');
+        const guideSoundsToggle = document.getElementById('guideSoundsToggle');
         const vibrationToggle = document.getElementById('vibrationToggle');
+        const volumeControl = document.getElementById('volumeControl');
         const volumeSlider = document.getElementById('volumeSlider');
         const volumeFill = document.getElementById('volumeFill');
         const todaySessions = document.getElementById('todaySessions');
@@ -1755,6 +1811,7 @@
             const prefs = {
                 ambientEnabled,
                 voiceEnabled,
+                guideSoundsEnabled,
                 vibrationEnabled,
                 currentAmbient,
                 volume
@@ -1764,6 +1821,24 @@
 
         function applyToggleState(button, enabled) {
             button.classList.toggle('active', enabled);
+            button.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        }
+
+        function isFullSilence() {
+            return !ambientEnabled && !voiceEnabled && !guideSoundsEnabled && !vibrationEnabled;
+        }
+
+        function syncAudioControls() {
+            const fullSilence = isFullSilence();
+            silenceRow.classList.toggle('active', fullSilence);
+            applyToggleState(silenceToggle, fullSilence);
+            applyToggleState(ambientToggle, ambientEnabled);
+            applyToggleState(voiceToggle, voiceEnabled);
+            applyToggleState(guideSoundsToggle, guideSoundsEnabled);
+            applyToggleState(vibrationToggle, vibrationEnabled);
+            ambientSelector.classList.toggle('active', ambientEnabled);
+            volumeControl.classList.toggle('muted', fullSilence);
+            ambientBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.ambient === currentAmbient));
         }
 
         function loadPreferences() {
@@ -1771,6 +1846,9 @@
                 const prefs = JSON.parse(localStorage.getItem('breathingPreferences') || '{}');
                 ambientEnabled = Boolean(prefs.ambientEnabled);
                 voiceEnabled = Boolean(prefs.voiceEnabled);
+                guideSoundsEnabled = Object.prototype.hasOwnProperty.call(prefs, 'guideSoundsEnabled')
+                    ? Boolean(prefs.guideSoundsEnabled)
+                    : true;
                 vibrationEnabled = Boolean(prefs.vibrationEnabled);
                 currentAmbient = ambientSounds[prefs.currentAmbient] ? prefs.currentAmbient : currentAmbient;
                 volume = Number.isFinite(Number(prefs.volume)) ? Math.max(0, Math.min(1, Number(prefs.volume))) : volume;
@@ -1778,11 +1856,7 @@
                 // Keep defaults if stored preferences are invalid.
             }
 
-            applyToggleState(ambientToggle, ambientEnabled);
-            applyToggleState(voiceToggle, voiceEnabled);
-            applyToggleState(vibrationToggle, vibrationEnabled);
-            ambientSelector.classList.toggle('active', ambientEnabled);
-            ambientBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.ambient === currentAmbient));
+            syncAudioControls();
             volumeFill.style.width = (volume * 100) + '%';
         }
 
@@ -1824,6 +1898,21 @@
             if (audioContext.state === 'suspended') {
                 audioContext.resume();
             }
+        }
+
+        function trackGuideNodes(nodes, durationMs) {
+            guideAudioNodes.push(...nodes);
+            setTimeout(() => {
+                guideAudioNodes = guideAudioNodes.filter(node => !nodes.includes(node));
+            }, durationMs + 250);
+        }
+
+        function stopGuideSounds() {
+            guideAudioNodes.forEach(node => {
+                try { node.stop(); } catch (e) {}
+                try { node.disconnect(); } catch (e) {}
+            });
+            guideAudioNodes = [];
         }
 
         function createNoiseBuffer(type, seconds) {
@@ -2055,7 +2144,7 @@
         }
 
         function playBreathSound(phase, duration) {
-            if (!audioContext) return;
+            if (!audioContext || !guideSoundsEnabled) return;
             
             const durationSec = duration / 1000;
             const now = audioContext.currentTime;
@@ -2172,6 +2261,8 @@
             noiseGain.connect(audioContext.destination);
             noiseSource.start(now);
             noiseSource.stop(now + durationSec);
+
+            trackGuideNodes([osc1, osc2, osc3, noiseSource], duration);
         }
 
         // Cache voices once loaded
@@ -2234,7 +2325,7 @@
         }
 
         function playChime(type = 'start') {
-            if (!audioContext) return;
+            if (!audioContext || !guideSoundsEnabled) return;
             
             const now = audioContext.currentTime;
             
@@ -2278,10 +2369,12 @@
             modulator.start(now);
             carrier.stop(now + 1.5);
             modulator.stop(now + 1.5);
+
+            trackGuideNodes([carrier, modulator], 1500);
         }
 
         function playHoldSound(duration) {
-            if (!audioContext) return;
+            if (!audioContext || !guideSoundsEnabled) return;
             
             const now = audioContext.currentTime;
             const durationSec = duration / 1000;
@@ -2308,6 +2401,8 @@
             
             osc.start(now);
             osc.stop(now + durationSec);
+
+            trackGuideNodes([osc], duration);
         }
 
         function vibrate(pattern) {
@@ -2821,8 +2916,6 @@
         // Audio toggles
         ambientToggle.addEventListener('click', () => {
             ambientEnabled = !ambientEnabled;
-            ambientToggle.classList.toggle('active');
-            ambientSelector.classList.toggle('active');
             
             if (isRunning) {
                 if (ambientEnabled) {
@@ -2832,6 +2925,7 @@
                     stopAmbientSound();
                 }
             }
+            syncAudioControls();
             savePreferences();
         });
 
@@ -2845,25 +2939,65 @@
                     stopAmbientSound();
                     startAmbientSound();
                 }
+                syncAudioControls();
                 savePreferences();
             });
         });
 
         voiceToggle.addEventListener('click', () => {
             voiceEnabled = !voiceEnabled;
-            voiceToggle.classList.toggle('active');
             if (voiceEnabled) {
                 speak(t('audio.voiceOn'));
+            } else if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
             }
+            syncAudioControls();
+            savePreferences();
+        });
+
+        guideSoundsToggle.addEventListener('click', () => {
+            guideSoundsEnabled = !guideSoundsEnabled;
+            if (!guideSoundsEnabled) {
+                stopGuideSounds();
+            } else if (isRunning) {
+                initAudio();
+            }
+            syncAudioControls();
             savePreferences();
         });
 
         vibrationToggle.addEventListener('click', () => {
             vibrationEnabled = !vibrationEnabled;
-            vibrationToggle.classList.toggle('active');
             if (vibrationEnabled) {
                 vibrate(100);
+            } else if ('vibrate' in navigator) {
+                navigator.vibrate(0);
             }
+            syncAudioControls();
+            savePreferences();
+        });
+
+        silenceToggle.addEventListener('click', () => {
+            if (isFullSilence()) {
+                guideSoundsEnabled = true;
+                if (isRunning) {
+                    initAudio();
+                }
+            } else {
+                ambientEnabled = false;
+                voiceEnabled = false;
+                guideSoundsEnabled = false;
+                vibrationEnabled = false;
+                stopAmbientSound();
+                stopGuideSounds();
+                if ('speechSynthesis' in window) {
+                    speechSynthesis.cancel();
+                }
+                if ('vibrate' in navigator) {
+                    navigator.vibrate(0);
+                }
+            }
+            syncAudioControls();
             savePreferences();
         });
 
