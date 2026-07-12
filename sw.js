@@ -1,5 +1,5 @@
-// Respiración Pro - Service Worker v3.1
-const CACHE_NAME = 'respiracion-pro-v3.1';
+// Respiración Pro - Service Worker v4.0 (rediseño bioluminiscencia circadiana + alemán)
+const CACHE_NAME = 'respiracion-pro-v4.0';
 const OFFLINE_URL = './index.html';
 
 // Archivos a cachear para funcionamiento offline

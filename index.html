@@ -1127,9 +1127,558 @@
         #importInput {
             display: none;
         }
+
+        /* ==================== BIOLUMINISCENCIA CIRCADIANA ====================
+           La app vive en un océano nocturno que cambia con la hora del día
+           (body[data-daypart]) mientras el orbe y el plancton respiran contigo.
+           Modos de tema: auto (circadiano) / oscuro / claro — applyThemeMode() en JS.
+           Las 4 fases de respiración mantienen su color propio en todas las franjas:
+           el entorno cambia, el significado no. */
+
+        body[data-theme="dark"] {
+            /* océano base (franja: noche) */
+            --sea-0: #01040c;
+            --sea-1: #040d20;
+            --sea-2: #081530;
+            --surface-glow: rgba(60, 130, 155, 0.20);
+            --bio: #6ee7d8;
+            --bio-strong: #9ff0e2;
+            --bio-glow: rgba(110, 231, 216, 0.45);
+            --halo: rgba(139, 124, 246, 0.30);
+            --mesh-1: rgba(139, 124, 246, 0.15);
+            --mesh-2: rgba(45, 140, 150, 0.17);
+            --mesh-3: rgba(110, 231, 216, 0.09);
+            --stars-opacity: 1;
+
+            --bg-primary: var(--sea-0);
+            --bg-secondary: #071125;
+            --bg-tertiary: rgba(16, 34, 58, 0.85);
+            --bg-card: rgba(7, 18, 36, 0.60);
+            --text-primary: #eaf6f3;
+            --text-secondary: #9fb8c0;
+            --text-muted: #5d7684;
+
+            --inhale: #5fe3cd;
+            --inhale-glow: rgba(95, 227, 205, 0.42);
+            --hold: #e8c886;
+            --hold-glow: rgba(232, 200, 134, 0.36);
+            --exhale: #6fc3e8;
+            --exhale-glow: rgba(111, 195, 232, 0.38);
+            --hold-empty: #ef9d78;
+            --hold-empty-glow: rgba(239, 157, 120, 0.36);
+
+            --accent: #7fe9da;
+            --accent-muted: rgba(127, 233, 218, 0.15);
+            --warning: #ef9d78;
+            --success: #5fe3cd;
+            --border: rgba(127, 233, 218, 0.14);
+            --shadow: rgba(0, 0, 0, 0.55);
+        }
+
+        /* Amanecer (5-9h): el agua se templa con rosa y ámbar */
+        body[data-theme="dark"][data-daypart="dawn"] {
+            --sea-0: #050a16;
+            --sea-1: #0c1830;
+            --sea-2: #23294a;
+            --surface-glow: rgba(238, 160, 130, 0.22);
+            --halo: rgba(228, 143, 174, 0.30);
+            --mesh-1: rgba(240, 150, 120, 0.14);
+            --mesh-2: rgba(200, 120, 160, 0.13);
+            --mesh-3: rgba(110, 231, 216, 0.08);
+            --stars-opacity: 0.25;
+            --accent: #ffc9a8;
+            --accent-muted: rgba(255, 201, 168, 0.16);
+            --border: rgba(255, 201, 168, 0.15);
+        }
+
+        /* Día (9-18h): azules más claros, luz que atraviesa el agua */
+        body[data-theme="dark"][data-daypart="day"] {
+            --sea-0: #04121e;
+            --sea-1: #0a2438;
+            --sea-2: #123c5c;
+            --surface-glow: rgba(110, 200, 230, 0.24);
+            --bio: #6fd9e8;
+            --bio-strong: #a8ecf5;
+            --bio-glow: rgba(111, 217, 232, 0.45);
+            --halo: rgba(90, 169, 230, 0.28);
+            --mesh-1: rgba(90, 190, 220, 0.16);
+            --mesh-2: rgba(60, 160, 190, 0.14);
+            --mesh-3: rgba(140, 230, 240, 0.09);
+            --stars-opacity: 0;
+            --accent: #8fe0f0;
+            --accent-muted: rgba(143, 224, 240, 0.16);
+            --border: rgba(143, 224, 240, 0.15);
+            --bg-secondary: #082036;
+            --bg-tertiary: rgba(18, 46, 72, 0.85);
+            --bg-card: rgba(9, 26, 46, 0.60);
+        }
+
+        /* Atardecer (18-22h): violetas y magentas sobre el agua */
+        body[data-theme="dark"][data-daypart="dusk"] {
+            --sea-0: #070515;
+            --sea-1: #120a2a;
+            --sea-2: #251341;
+            --surface-glow: rgba(196, 120, 200, 0.20);
+            --halo: rgba(192, 122, 224, 0.32);
+            --mesh-1: rgba(200, 110, 200, 0.15);
+            --mesh-2: rgba(120, 90, 210, 0.15);
+            --mesh-3: rgba(240, 170, 110, 0.09);
+            --stars-opacity: 0.55;
+            --accent: #e0a8e6;
+            --accent-muted: rgba(224, 168, 230, 0.16);
+            --border: rgba(224, 168, 230, 0.15);
+            --bg-secondary: #100a24;
+            --bg-tertiary: rgba(34, 22, 58, 0.85);
+            --bg-card: rgba(16, 10, 34, 0.60);
+        }
+
+        /* Tema claro manual: luz de sol a través del agua */
+        body[data-theme="light"] {
+            --sea-0: #eef7f6;
+            --sea-1: #f7fcfb;
+            --sea-2: #dceeeb;
+            --surface-glow: rgba(20, 150, 135, 0.10);
+            --bio: #12a08e;
+            --bio-strong: #0d7f71;
+            --bio-glow: rgba(18, 160, 142, 0.25);
+            --halo: rgba(110, 130, 220, 0.14);
+            --mesh-1: rgba(110, 130, 220, 0.08);
+            --mesh-2: rgba(20, 150, 135, 0.08);
+            --mesh-3: rgba(20, 150, 135, 0.05);
+            --stars-opacity: 0;
+
+            --bg-primary: var(--sea-1);
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e4f1ee;
+            --bg-card: rgba(255, 255, 255, 0.82);
+            --text-primary: #10312f;
+            --text-secondary: #48666b;
+            --text-muted: #7e979b;
+
+            --inhale: #12a08e;
+            --inhale-glow: rgba(18, 160, 142, 0.22);
+            --hold: #b18a3c;
+            --hold-glow: rgba(177, 138, 60, 0.22);
+            --exhale: #2585b5;
+            --exhale-glow: rgba(37, 133, 181, 0.20);
+            --hold-empty: #c96f4c;
+            --hold-empty-glow: rgba(201, 111, 76, 0.20);
+
+            --accent: #12a08e;
+            --accent-muted: rgba(18, 160, 142, 0.13);
+            --warning: #c96f4c;
+            --success: #12a08e;
+            --border: rgba(16, 49, 47, 0.12);
+            --shadow: rgba(24, 60, 56, 0.14);
+        }
+
+        body {
+            background:
+                radial-gradient(ellipse 130% 60% at 50% -12%, var(--surface-glow), transparent 60%),
+                linear-gradient(175deg, var(--sea-1) 0%, var(--sea-2) 52%, var(--sea-0) 100%);
+        }
+
+        body::before {
+            background:
+                radial-gradient(ellipse 80% 50% at 22% 18%, var(--phase-glow) 0%, transparent 52%),
+                radial-gradient(ellipse 60% 40% at 80% 82%, var(--halo) 0%, transparent 55%);
+            opacity: 0.85;
+        }
+
+        /* --- Océano de fondo: corrientes de luz y estrellas --- */
+        .ocean {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .mesh {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            will-change: transform;
+        }
+
+        .mesh.m1 {
+            width: 62vmax;
+            height: 62vmax;
+            left: -20vmax;
+            top: -14vmax;
+            background: var(--mesh-1);
+            animation: oceanDrift1 30s ease-in-out infinite alternate;
+        }
+
+        .mesh.m2 {
+            width: 70vmax;
+            height: 70vmax;
+            right: -28vmax;
+            top: 26%;
+            background: var(--mesh-2);
+            animation: oceanDrift2 38s ease-in-out infinite alternate;
+        }
+
+        .mesh.m3 {
+            width: 54vmax;
+            height: 54vmax;
+            left: -14vmax;
+            bottom: -22vmax;
+            background: var(--mesh-3);
+            animation: oceanDrift1 46s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes oceanDrift1 {
+            from { transform: translate3d(0, 0, 0); }
+            to { transform: translate3d(6vmax, 4vmax, 0); }
+        }
+
+        @keyframes oceanDrift2 {
+            from { transform: translate3d(0, 0, 0); }
+            to { transform: translate3d(-5vmax, -6vmax, 0); }
+        }
+
+        .stars {
+            position: absolute;
+            inset: 0 0 45% 0;
+            opacity: var(--stars-opacity);
+            transition: opacity 1.5s ease;
+        }
+
+        .stars span {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            border-radius: 50%;
+            background: #ffffff;
+            opacity: 0.5;
+            animation: starTwinkle 4.5s ease-in-out infinite;
+        }
+
+        .stars span:nth-child(2n) { animation-delay: 1.4s; opacity: 0.32; }
+        .stars span:nth-child(3n) { animation-delay: 2.7s; width: 1.5px; height: 1.5px; }
+        .stars span:nth-child(5n) { animation-delay: 3.6s; }
+
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 0.14; }
+            50% { opacity: 0.6; }
+        }
+
+        /* --- Cabecera --- */
+        .header h1 {
+            text-shadow: 0 0 24px var(--bio-glow);
+        }
+
+        .icon-btn {
+            background:
+                linear-gradient(150deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.01)),
+                var(--bg-card);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+        }
+
+        /* --- Sección de respiración: vidrio profundo --- */
+        .breathing-section,
+        .card,
+        .modal {
+            background:
+                linear-gradient(150deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.008)),
+                var(--bg-card);
+            -webkit-backdrop-filter: blur(22px) saturate(120%);
+            backdrop-filter: blur(22px) saturate(120%);
+            border: 1px solid var(--border);
+            box-shadow: 0 24px 60px var(--shadow);
+        }
+
+        /* --- El orbe --- */
+        .circle-bg {
+            background:
+                radial-gradient(circle at 36% 30%, rgba(255, 255, 255, 0.34) 0%, transparent 26%),
+                radial-gradient(circle at 50% 56%, var(--bio-strong) 0%, var(--bio) 32%, rgba(20, 90, 105, 0.9) 68%, rgba(6, 28, 48, 0.98) 100%);
+            box-shadow:
+                0 0 70px var(--bio-glow),
+                0 0 140px var(--halo),
+                inset 0 0 44px rgba(255, 255, 255, 0.16),
+                0 0 0 1px var(--border);
+        }
+
+        body[data-theme="light"] .circle-bg {
+            background:
+                radial-gradient(circle at 36% 30%, rgba(255, 255, 255, 0.85) 0%, transparent 30%),
+                radial-gradient(circle at 50% 56%, #bdeee6 0%, #66c9ba 40%, #1d8d7d 82%, #0f6b60 100%);
+            box-shadow:
+                0 0 54px var(--bio-glow),
+                0 18px 48px var(--shadow),
+                inset 0 0 40px rgba(255, 255, 255, 0.35);
+        }
+
+        .circle-bg.inhale {
+            box-shadow:
+                0 0 100px var(--inhale-glow),
+                0 0 190px var(--halo),
+                inset 0 0 56px rgba(255, 255, 255, 0.22),
+                0 0 0 1px var(--inhale);
+        }
+
+        .circle-bg.hold {
+            box-shadow:
+                0 0 84px var(--hold-glow),
+                0 0 160px var(--halo),
+                inset 0 0 48px rgba(255, 255, 255, 0.18),
+                0 0 0 1px var(--hold);
+        }
+
+        .circle-bg.exhale {
+            box-shadow:
+                0 0 70px var(--exhale-glow),
+                0 0 130px var(--halo),
+                inset 0 0 40px rgba(255, 255, 255, 0.14),
+                0 0 0 1px var(--exhale);
+        }
+
+        .circle-bg.hold-empty {
+            box-shadow:
+                0 0 60px var(--hold-empty-glow),
+                0 0 120px var(--halo),
+                inset 0 0 36px rgba(255, 255, 255, 0.12),
+                0 0 0 1px var(--hold-empty);
+        }
+
+        /* Respiración en reposo: el orbe nunca está muerto */
+        .circle-container[data-phase="idle"] .circle-bg {
+            animation: orbIdle 7s ease-in-out infinite;
+        }
+
+        @keyframes orbIdle {
+            0%, 100% { transform: scale(0.985); }
+            50% { transform: scale(1.015); }
+        }
+
+        .circle-progress .track {
+            stroke: var(--border);
+        }
+
+        .breath-text {
+            text-shadow: 0 0 20px var(--phase-glow);
+        }
+
+        body[data-theme="dark"] .breath-text,
+        body[data-theme="dark"] .phase-timer {
+            color: #04251f;
+        }
+
+        body[data-theme="dark"] .breath-text {
+            color: #063a32;
+            font-weight: 400;
+        }
+
+        body[data-theme="dark"] .breath-count {
+            color: rgba(6, 58, 50, 0.75);
+        }
+
+        /* --- Plancton: acude al orbe al inhalar, se dispersa al exhalar --- */
+        .plankton {
+            position: absolute;
+            inset: -46px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .plankton span {
+            position: absolute;
+            left: var(--x);
+            top: var(--y);
+            width: var(--s, 4px);
+            height: var(--s, 4px);
+            border-radius: 50%;
+            background: var(--bio);
+            box-shadow: 0 0 10px var(--bio-glow), 0 0 22px var(--halo);
+            opacity: 0.35;
+            transition:
+                transform var(--phase-ms, 4000ms) cubic-bezier(0.45, 0.05, 0.35, 0.95),
+                opacity var(--phase-ms, 4000ms) ease;
+        }
+
+        .circle-container[data-phase="idle"] .plankton span {
+            animation: planktonFloat 8s ease-in-out infinite alternate;
+            animation-delay: var(--d, 0s);
+        }
+
+        @keyframes planktonFloat {
+            from { transform: translate(0, 0); opacity: 0.22; }
+            to { transform: translate(6px, -8px); opacity: 0.5; }
+        }
+
+        .circle-container[data-phase="inhale"] .plankton span,
+        .circle-container[data-phase="hold"] .plankton span {
+            transform: translate(var(--tx), var(--ty)) scale(0.45);
+            opacity: 0.95;
+        }
+
+        .circle-container[data-phase="exhale"] .plankton span,
+        .circle-container[data-phase="hold-empty"] .plankton span {
+            transform: translate(0, 0) scale(1);
+            opacity: 0.3;
+        }
+
+        /* --- Botón principal --- */
+        .start-btn {
+            background: linear-gradient(180deg, var(--bio-strong) 0%, var(--bio) 45%, rgba(24, 118, 118, 0.95) 100%);
+            color: #04251f;
+            box-shadow:
+                0 10px 34px var(--bio-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .start-btn:hover {
+            box-shadow:
+                0 14px 44px var(--bio-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .start-btn.active {
+            background: linear-gradient(180deg, #f6b593 0%, var(--hold-empty) 55%, #b45f42 100%);
+            color: #3a1608;
+            box-shadow:
+                0 10px 34px var(--hold-empty-glow),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        body[data-theme="light"] .start-btn {
+            color: #ffffff;
+        }
+
+        body[data-theme="light"] .start-btn.active {
+            color: #ffffff;
+        }
+
+        /* --- Tarjetas laterales --- */
+        .mode-btn {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .mode-btn.active {
+            background: var(--accent-muted);
+            border-color: var(--accent);
+            box-shadow: 0 0 22px var(--accent-muted);
+        }
+
+        .mode-description {
+            background: rgba(0, 0, 0, 0.16);
+        }
+
+        body[data-theme="light"] .mode-description {
+            background: var(--bg-tertiary);
+        }
+
+        .audio-row.audio-master {
+            background: rgba(0, 0, 0, 0.14);
+        }
+
+        body[data-theme="light"] .audio-row.audio-master {
+            background: var(--bg-tertiary);
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.16);
+            border: 1px solid var(--border);
+        }
+
+        body[data-theme="light"] .stat-item {
+            background: var(--bg-tertiary);
+        }
+
+        .stat-value {
+            text-shadow: 0 0 18px var(--bio-glow);
+        }
+
+        .custom-field input {
+            background: rgba(0, 0, 0, 0.18);
+        }
+
+        body[data-theme="light"] .custom-field input {
+            background: #ffffff;
+        }
+
+        .ambient-btn {
+            background: rgba(0, 0, 0, 0.14);
+        }
+
+        body[data-theme="light"] .ambient-btn {
+            background: var(--bg-tertiary);
+        }
+
+        .volume-slider {
+            background: rgba(0, 0, 0, 0.22);
+        }
+
+        body[data-theme="light"] .volume-slider {
+            background: var(--bg-tertiary);
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        body[data-theme="light"] .history-item {
+            background: var(--bg-tertiary);
+        }
+
+        .countdown-overlay {
+            background: color-mix(in srgb, var(--sea-0) 94%, transparent);
+        }
+
+        .countdown-number {
+            color: var(--bio);
+            text-shadow: 0 0 40px var(--bio-glow);
+        }
+
+        .modal-overlay {
+            background: color-mix(in srgb, var(--sea-0) 88%, transparent);
+        }
+
+        .toast {
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+        }
+
+        /* --- Movimiento reducido: respeto total --- */
+        @media (prefers-reduced-motion: reduce) {
+            .mesh,
+            .stars span,
+            .circle-container[data-phase="idle"] .circle-bg,
+            .circle-container[data-phase="idle"] .plankton span {
+                animation: none;
+            }
+
+            .plankton span {
+                transition: opacity var(--phase-ms, 4000ms) ease;
+            }
+        }
     </style>
 </head>
-<body data-theme="dark">
+<body data-theme="dark" data-daypart="night">
+    <div class="ocean" aria-hidden="true">
+        <div class="mesh m1"></div>
+        <div class="mesh m2"></div>
+        <div class="mesh m3"></div>
+        <div class="stars">
+            <span style="left:7%;top:9%"></span>
+            <span style="left:16%;top:26%"></span>
+            <span style="left:24%;top:6%"></span>
+            <span style="left:33%;top:18%"></span>
+            <span style="left:41%;top:4%"></span>
+            <span style="left:52%;top:22%"></span>
+            <span style="left:60%;top:8%"></span>
+            <span style="left:68%;top:30%"></span>
+            <span style="left:76%;top:12%"></span>
+            <span style="left:84%;top:24%"></span>
+            <span style="left:92%;top:7%"></span>
+            <span style="left:12%;top:44%"></span>
+            <span style="left:47%;top:38%"></span>
+            <span style="left:88%;top:42%"></span>
+        </div>
+    </div>
     <div class="app-container">
         <header class="header">
             <h1 id="appTitle">Respiración Pro</h1>
@@ -1159,8 +1708,22 @@
                 </div>
 
                 <div class="breathing-circle">
-                    <div class="circle-container">
+                    <div class="circle-container" data-phase="idle">
                         <div class="circle-bg" id="circleBg"></div>
+                        <div class="plankton" aria-hidden="true">
+                            <span style="--x:4%;  --y:12%; --tx:112px; --ty:96px;  --s:5px; --d:0s"></span>
+                            <span style="--x:90%; --y:8%;  --tx:-106px;--ty:106px; --s:4px; --d:1.1s"></span>
+                            <span style="--x:2%;  --y:56%; --tx:122px; --ty:-28px; --s:6px; --d:2.2s"></span>
+                            <span style="--x:94%; --y:53%; --tx:-116px;--ty:-20px; --s:4px; --d:0.6s"></span>
+                            <span style="--x:14%; --y:88%; --tx:92px;  --ty:-96px; --s:3px; --d:1.7s"></span>
+                            <span style="--x:82%; --y:90%; --tx:-86px; --ty:-102px;--s:5px; --d:2.8s"></span>
+                            <span style="--x:47%; --y:0%;  --tx:2px;   --ty:122px; --s:3px; --d:0.9s"></span>
+                            <span style="--x:49%; --y:98%; --tx:0px;   --ty:-116px;--s:4px; --d:2.0s"></span>
+                            <span style="--x:-3%; --y:32%; --tx:126px; --ty:32px;  --s:3px; --d:1.4s"></span>
+                            <span style="--x:100%;--y:30%; --tx:-122px;--ty:36px;  --s:3px; --d:2.5s"></span>
+                            <span style="--x:26%; --y:4%;  --tx:62px;  --ty:106px; --s:4px; --d:0.3s"></span>
+                            <span style="--x:72%; --y:96%; --tx:-56px; --ty:-108px;--s:4px; --d:1.9s"></span>
+                        </div>
                         <svg class="circle-progress" viewBox="0 0 300 300">
                             <circle class="track" cx="150" cy="150" r="140"/>
                             <circle class="progress" cx="150" cy="150" r="140" id="progressCircle"/>
@@ -1384,6 +1947,9 @@
                 'meta.description': 'Ejercicios de respiración guiados para relajación, concentración y bienestar diario. Técnicas 4-7-8, coherente, box breathing y más.',
                 'title.theme': 'Cambiar tema',
                 'title.help': 'Atajos de teclado',
+                'theme.auto': 'Tema automático: cambia con la hora del día',
+                'theme.dark': 'Tema oscuro fijo',
+                'theme.light': 'Tema claro fijo',
                 'countdown.ready': 'Prepárate',
                 'state.ready': 'Preparado',
                 'state.start': 'Comenzar',
@@ -1445,6 +2011,9 @@
                 'meta.description': 'Guided breathing exercises for relaxation, focus, and daily wellbeing. Includes 4-7-8, coherent breathing, box breathing, and more.',
                 'title.theme': 'Change theme',
                 'title.help': 'Keyboard shortcuts',
+                'theme.auto': 'Auto theme: follows the time of day',
+                'theme.dark': 'Fixed dark theme',
+                'theme.light': 'Fixed light theme',
                 'countdown.ready': 'Get ready',
                 'state.ready': 'Ready',
                 'state.start': 'Start',
@@ -1495,12 +2064,76 @@
                 'toast.help': 'Tap the circle or the button to begin',
                 'toast.update': 'New version available. Reload to update.',
                 'toast.installed': 'App installed successfully',
-                'language.next': 'ES',
-                'language.title': 'Cambiar a español',
+                'language.next': 'DE',
+                'language.title': 'Zu Deutsch wechseln',
                 'locale': 'en-US',
                 'data.minutesShort': 'min',
                 'data.sessions': 'sessions',
                 'data.minutes': 'min'
+            },
+            de: {
+                'meta.description': 'Geführte Atemübungen für Entspannung, Konzentration und tägliches Wohlbefinden. Mit 4-7-8, Box-Breathing und mehr.',
+                'title.theme': 'Design wechseln',
+                'title.help': 'Tastaturkürzel',
+                'theme.auto': 'Automatisches Design: folgt der Tageszeit',
+                'theme.dark': 'Festes dunkles Design',
+                'theme.light': 'Festes helles Design',
+                'countdown.ready': 'Mach dich bereit',
+                'state.ready': 'Bereit',
+                'state.start': 'Starten',
+                'state.stop': 'Beenden',
+                'state.completed': 'Geschafft',
+                'phase.inhale': 'Einatmen',
+                'phase.hold': 'Halten',
+                'phase.exhale': 'Ausatmen',
+                'phase.holdEmpty': 'Leer halten',
+                'cycle': 'Zyklus',
+                'timer.remaining': 'Verbleibende Zeit',
+                'timer.free': 'Freier Modus',
+                'keyboard.space': 'Leertaste',
+                'keyboard.startPause': 'Start/Pause',
+                'keyboard.stop': 'Stopp',
+                'section.mode': 'Atemmodus',
+                'section.audio': 'Audio',
+                'section.today': 'Heute',
+                'custom.inhale': 'Einatmen (s)',
+                'custom.hold': 'Halten (s)',
+                'custom.exhale': 'Ausatmen (s)',
+                'custom.holdEmpty': 'Leer halten (s)',
+                'custom.duration': 'Dauer (min)',
+                'action.export': 'Exportieren',
+                'action.save': 'Speichern',
+                'action.close': 'Schließen',
+                'audio.silenceAll': 'Komplett stumm',
+                'audio.ambient': 'Umgebungsklang',
+                'audio.voice': 'Sprachführung',
+                'audio.guideSounds': 'Atemklänge',
+                'audio.vibration': 'Vibration',
+                'audio.voiceOn': 'Sprachführung aktiviert',
+                'stats.sessions': 'Sitzungen',
+                'stats.minutes': 'Minuten',
+                'history.viewFull': 'Gesamten Verlauf ansehen',
+                'history.title': 'Verlauf',
+                'history.last7': 'Letzte 7 Tage',
+                'history.exportData': 'Daten exportieren',
+                'history.importData': 'Importieren',
+                'history.noData': 'Noch keine Daten',
+                'toast.patternSaved': 'Muster gespeichert',
+                'toast.patternExported': 'Muster exportiert',
+                'toast.dataExported': 'Daten exportiert',
+                'toast.patternImported': 'Muster importiert',
+                'toast.dataImported': 'Daten importiert',
+                'toast.importError': 'Fehler beim Import',
+                'toast.invalidPattern': 'Prüfe die Zeiten des Musters',
+                'toast.help': 'Tippe auf den Kreis oder den Button, um zu beginnen',
+                'toast.update': 'Neue Version verfügbar. Zum Aktualisieren neu laden.',
+                'toast.installed': 'App erfolgreich installiert',
+                'language.next': 'ES',
+                'language.title': 'Cambiar a español',
+                'locale': 'de-DE',
+                'data.minutesShort': 'Min.',
+                'data.sessions': 'Sitzungen',
+                'data.minutes': 'Min.'
             }
         };
 
@@ -1556,18 +2189,50 @@
                     name: 'Custom',
                     description: 'Create your own personalized breathing pattern.'
                 }
+            },
+            de: {
+                relaxing: {
+                    name: 'Entspannend',
+                    description: '4-7-8-Technik: 4s einatmen, 7s halten, 8s ausatmen. Ein sanfter Rhythmus zum Runterkommen vor dem Schlafen.'
+                },
+                box: {
+                    name: 'Box',
+                    description: 'Box-Breathing: 4s je Phase. Hilft, in fordernden Momenten Rhythmus und Fokus zurückzugewinnen.'
+                },
+                energizing: {
+                    name: 'Aktivierend',
+                    description: 'Ausgeglichene Atmung ohne Halten. Für eine kurze, aktive Pause am Tag.'
+                },
+                calm: {
+                    name: 'Ruhe',
+                    description: 'Verlängertes Ausatmen für eine langsame, stabile Praxis, wenn du das Tempo senken willst.'
+                },
+                free: {
+                    name: 'Frei',
+                    description: 'Meditation ohne Zeitlimit. Übe, bis du dich bereit fühlst aufzuhören.'
+                },
+                custom: {
+                    name: 'Eigenes',
+                    description: 'Erstelle dein eigenes Atemmuster.'
+                }
             }
         };
 
         const ambientCopy = {
             es: { rain: 'Lluvia', forest: 'Bosque', waves: 'Olas', wind: 'Viento' },
-            en: { rain: 'Rain', forest: 'Forest', waves: 'Waves', wind: 'Wind' }
+            en: { rain: 'Rain', forest: 'Forest', waves: 'Waves', wind: 'Wind' },
+            de: { rain: 'Regen', forest: 'Wald', waves: 'Wellen', wind: 'Wind' }
         };
+
+        const SUPPORTED_LANGUAGES = ['es', 'en', 'de'];
 
         function initialLanguage() {
             const saved = localStorage.getItem('language');
-            if (saved === 'es' || saved === 'en') return saved;
-            return navigator.language && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'es';
+            if (SUPPORTED_LANGUAGES.includes(saved)) return saved;
+            const nav = (navigator.language || '').toLowerCase();
+            if (nav.startsWith('de')) return 'de';
+            if (nav.startsWith('en')) return 'en';
+            return 'es';
         }
 
         let currentLanguage = initialLanguage();
@@ -1712,6 +2377,16 @@
         progressCircle.style.strokeDasharray = circumference;
         progressCircle.style.strokeDashoffset = circumference;
 
+        // Escena del orbe: el plancton sigue las fases reales de la respiración
+        const circleScene = document.querySelector('.circle-container');
+
+        function setScenePhase(phase, durationMs) {
+            circleScene.dataset.phase = phase;
+            if (durationMs) {
+                circleScene.style.setProperty('--phase-ms', durationMs + 'ms');
+            }
+        }
+
         // ==================== UTILITIES ====================
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -1742,14 +2417,63 @@
             document.documentElement.style.setProperty('--phase-glow', c.glow);
         }
 
+        // ==================== TEMA CIRCADIANO ====================
+        // auto: el océano sigue la hora del día · dark: noche fija · light: claro fijo
+        const THEME_MODES = ['auto', 'dark', 'light'];
+
+        function initialThemeMode() {
+            const saved = localStorage.getItem('themeMode');
+            if (THEME_MODES.includes(saved)) return saved;
+            // Migración desde el ajuste anterior de dos estados (dark/light)
+            return localStorage.getItem('theme') === 'light' ? 'light' : 'auto';
+        }
+
+        let themeMode = initialThemeMode();
+
+        function daypartForHour(hour) {
+            if (hour >= 5 && hour < 9) return 'dawn';
+            if (hour >= 9 && hour < 18) return 'day';
+            if (hour >= 18 && hour < 22) return 'dusk';
+            return 'night';
+        }
+
+        const daypartThemeColor = {
+            dawn: '#0c1830',
+            day: '#0a2438',
+            dusk: '#120a2a',
+            night: '#040d20',
+            light: '#f7fcfb'
+        };
+
+        function applyThemeMode() {
+            let theme = 'dark';
+            let daypart = 'night';
+            if (themeMode === 'light') {
+                theme = 'light';
+                daypart = 'day';
+            } else if (themeMode === 'auto') {
+                daypart = daypartForHour(new Date().getHours());
+            }
+            document.body.setAttribute('data-theme', theme);
+            document.body.setAttribute('data-daypart', daypart);
+            const metaColor = theme === 'light' ? daypartThemeColor.light : daypartThemeColor[daypart];
+            document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', metaColor));
+        }
+
+        // En modo auto el océano acompaña el paso de las horas
+        setInterval(() => {
+            if (themeMode === 'auto') applyThemeMode();
+        }, 60000);
+
         function applyLanguage(lang, persist = true) {
-            currentLanguage = lang === 'en' ? 'en' : 'es';
+            currentLanguage = SUPPORTED_LANGUAGES.includes(lang) ? lang : 'es';
             if (persist) {
                 localStorage.setItem('language', currentLanguage);
             }
 
             document.documentElement.lang = currentLanguage;
-            const appName = currentLanguage === 'en' ? 'Breathing Pro' : 'Respiración Pro';
+            const appNames = { es: 'Respiración Pro', en: 'Breathing Pro', de: 'Atem Pro' };
+            const appName = appNames[currentLanguage];
             document.title = appName;
             const appTitleEl = document.getElementById('appTitle');
             if (appTitleEl) appTitleEl.textContent = appName;
@@ -2279,14 +3003,15 @@
                 if (!voiceEnabled) return;
 
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = currentLanguage === 'en' ? 'en-US' : 'es-ES';
+                const speechLocales = { es: 'es-ES', en: 'en-US', de: 'de-DE' };
+                utterance.lang = speechLocales[currentLanguage] || 'es-ES';
                 utterance.rate = 0.75;
                 utterance.pitch = 0.7;
                 utterance.volume = Math.min(1.0, volume * 1.0); // Full volume for voice
 
                 // Use cached voices or fetch fresh
                 const voices = cachedVoices.length > 0 ? cachedVoices : speechSynthesis.getVoices();
-                const langCode = currentLanguage === 'en' ? 'en' : 'es';
+                const langCode = currentLanguage;
                 const languageVoices = voices.filter(v =>
                     v.lang.toLowerCase().startsWith(langCode) ||
                     v.lang.toLowerCase().replace('_', '-').startsWith(langCode)
@@ -2459,6 +3184,7 @@
             phaseTimerEl.classList.add('active');
             
             circleBg.className = 'circle-bg inhale';
+            setScenePhase('inhale', mode.inhale);
             progressCircle.style.transition = `stroke-dashoffset ${mode.inhale}ms linear`;
             progressCircle.style.strokeDashoffset = '0';
             
@@ -2476,12 +3202,13 @@
                 speak(t('phase.hold'));
                 playChime('hold');
                 circleBg.className = 'circle-bg hold';
+                setScenePhase('hold', mode.hold);
                 playHoldSound(mode.hold);
-                
+
                 await animatePhaseTimer(mode.hold);
                 if (!isRunning) return;
             }
-            
+
             // Exhale
             currentPhase = 'exhale';
             setPhaseColor('exhale');
@@ -2489,6 +3216,7 @@
             speak(t('phase.exhale'));
             playChime('exhale');
             circleBg.className = 'circle-bg exhale';
+            setScenePhase('exhale', mode.exhale);
             progressCircle.style.transition = `stroke-dashoffset ${mode.exhale}ms linear`;
             progressCircle.style.strokeDashoffset = circumference.toString();
             
@@ -2506,6 +3234,7 @@
                 speak(t('phase.hold'));
                 playChime('hold');
                 circleBg.className = 'circle-bg hold-empty';
+                setScenePhase('hold-empty', mode.holdEmpty);
                 playHoldSound(mode.holdEmpty);
                 
                 await animatePhaseTimer(mode.holdEmpty);
@@ -2596,6 +3325,7 @@
             breathCountEl.classList.remove('active');
             phaseTimerEl.classList.remove('active');
             circleBg.className = 'circle-bg';
+            setScenePhase('idle');
             progressCircle.style.strokeDashoffset = circumference.toString();
             
             setPhaseColor('inhale');
@@ -2665,9 +3395,12 @@
             
             // Get last 7 days
             const days = [];
-            const dayNames = currentLanguage === 'en'
-                ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-                : ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+            const dayNamesByLang = {
+                es: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+                en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                de: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa']
+            };
+            const dayNames = dayNamesByLang[currentLanguage] || dayNamesByLang.es;
             
             for (let i = 6; i >= 0; i--) {
                 const date = new Date();
@@ -3041,20 +3774,22 @@
 
         document.addEventListener('touchend', () => isDragging = false);
 
-        // Language
+        // Language (cycles es -> en -> de)
         languageToggle.addEventListener('click', () => {
-            applyLanguage(currentLanguage === 'es' ? 'en' : 'es');
+            const next = SUPPORTED_LANGUAGES[(SUPPORTED_LANGUAGES.indexOf(currentLanguage) + 1) % SUPPORTED_LANGUAGES.length];
+            applyLanguage(next);
             if (historyModal.classList.contains('active')) {
                 loadHistory();
             }
         });
 
-        // Theme
+        // Theme (cycles auto -> dark -> light)
         themeToggle.addEventListener('click', () => {
-            const currentTheme = document.body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.body.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+            themeMode = THEME_MODES[(THEME_MODES.indexOf(themeMode) + 1) % THEME_MODES.length];
+            localStorage.setItem('themeMode', themeMode);
+            localStorage.setItem('theme', themeMode === 'light' ? 'light' : 'dark'); // compatibilidad
+            applyThemeMode();
+            showToast(t('theme.' + themeMode));
         });
 
         // Help
@@ -3094,8 +3829,7 @@
 
         // ==================== INIT ====================
         function init() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.body.setAttribute('data-theme', savedTheme);
+            applyThemeMode();
             loadPreferences();
             loadSavedCustomPattern();
             loadStats();
