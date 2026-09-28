@@ -7,10 +7,13 @@ Ejecuta las recetas SVG de la maqueta en Chromium (Playwright) y guarda el
 resultado como imágenes. La app solo pinta mapas de bits: nada de filtros SVG
 en tiempo real, que es lo que cuesta en un móvil modesto.
 
-  img/enso.webp          ensō completo, negro con transparencia (la app lo tiñe)
-  img/aguada.webp        aguada de tinta que respira, negro con transparencia
+  img/enso-papel.webp    ensō completo en tinta negra (aspecto papel), con transparencia
+  img/enso-tinta.webp    el mismo ensō en tinta clara (aspecto tinta)
+  img/aguada-papel.webp  aguada de tinta que respira (papel)
+  img/aguada-tinta.webp  aguada de tinta que respira (tinta)
   img/papel.webp         baldosa de papel claro (360 px CSS a 2x)
   img/tinta.webp         baldosa de papel oscuro (360 px CSS a 2x)
+Los colores de tinta son los de index.html (--ink): #1b1b18 en papel, #ebe3d2 en tinta.
 """
 import base64
 import pathlib
@@ -24,6 +27,7 @@ OUT = ROOT / "img"
 
 PAGE_JS = """
 async ({kind, px, look, quality}) => {
+  const ink = look === 'tinta' ? '#ebe3d2' : '#1b1b18';
   const load = svg => new Promise((ok, ko) => {
     const img = new Image();
     img.onload = () => ok(img); img.onerror = ko;
@@ -32,9 +36,9 @@ async ({kind, px, look, quality}) => {
   const c = document.createElement('canvas'); c.width = c.height = px;
   const x = c.getContext('2d');
   if (kind === 'enso') {
-    x.drawImage(await load(ensoSVG('#000', buildEnso(20260928), px)), 0, 0, px, px);
+    x.drawImage(await load(ensoSVG(ink, buildEnso(20260928), px)), 0, 0, px, px);
   } else if (kind === 'aguada') {
-    x.drawImage(await load(washSVG('#000', px)), 0, 0, px, px);
+    x.drawImage(await load(washSVG(ink, px)), 0, 0, px, px);
   } else {
     // mismo resultado que el ::before con mix-blend-mode de la maqueta, pero ya fundido
     x.fillStyle = look === 'tinta' ? '#1a1b17' : '#f1eadc';
@@ -47,8 +51,10 @@ async ({kind, px, look, quality}) => {
 """
 
 JOBS = [
-    ("enso.webp", dict(kind="enso", px=900, look="", quality=0.92)),
-    ("aguada.webp", dict(kind="aguada", px=512, look="", quality=0.92)),
+    ("enso-papel.webp", dict(kind="enso", px=900, look="papel", quality=0.92)),
+    ("enso-tinta.webp", dict(kind="enso", px=900, look="tinta", quality=0.92)),
+    ("aguada-papel.webp", dict(kind="aguada", px=512, look="papel", quality=0.92)),
+    ("aguada-tinta.webp", dict(kind="aguada", px=512, look="tinta", quality=0.92)),
     ("papel.webp", dict(kind="grain", px=720, look="papel", quality=0.9)),
     ("tinta.webp", dict(kind="grain", px=720, look="tinta", quality=0.9)),
 ]

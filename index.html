@@ -56,7 +56,7 @@ button:disabled{opacity:.3;cursor:default}
 
 .center{position:relative;flex:1;min-height:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .circle{--c:min(300px,78vw,44vh);position:relative;flex:none;width:var(--c);height:var(--c);cursor:pointer;outline:none}
-.circle>*{position:absolute}
+.circle>*{position:absolute;pointer-events:none;-webkit-touch-callout:none}
 .guide,.paint{left:0;top:0;width:100%;height:100%}
 .guide{opacity:.13;transition:opacity 1.4s ease}
 .wash{left:17%;top:17%;width:66%;height:66%;opacity:0;will-change:transform,opacity}
@@ -181,9 +181,12 @@ button:disabled{opacity:.3;cursor:default}
 
   <main class="center">
     <div class="circle" id="circle" role="button" tabindex="0">
-      <canvas class="guide" id="guide" aria-hidden="true"></canvas>
-      <canvas class="wash" id="wash" aria-hidden="true"></canvas>
-      <canvas class="paint" id="paint" aria-hidden="true"></canvas>
+      <img class="guide" id="guide" alt="" draggable="false">
+      <img class="wash" id="wash" alt="" draggable="false">
+      <svg class="paint" id="paint" viewBox="0 0 300 300" aria-hidden="true">
+        <defs><mask id="reveal" maskUnits="userSpaceOnUse" x="0" y="0" width="300" height="300"><path id="revPath" fill="none" stroke="#fff" stroke-width="38" stroke-linecap="round"/></mask></defs>
+        <image id="ensoImg" x="0" y="0" width="300" height="300" mask="url(#reveal)"/>
+      </svg>
       <div class="seal-slot" id="sealSlot"></div>
     </div>
     <div class="phase">
@@ -232,7 +235,7 @@ button:disabled{opacity:.3;cursor:default}
   </section>
 </div>
 
-<input type="file" id="importInput" accept="application/json,.json" hidden>
+<input type="file" id="importInput" accept="application/json,text/plain,.json,.txt" hidden>
 
 <!-- filtros del sello (tinta del tampón irregular); son pequeños y se pintan una vez -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -439,7 +442,7 @@ function loadHistory(){
   const list = store.json('breathingSessions', []);
   sessions = Array.isArray(list) ? list.filter(s => s && Number.isFinite(s.t) && typeof s.d === 'string' && Number.isFinite(s.min)) : [];
 }
-function saveHistory(){ store.set('breathingStats', stats); store.set('breathingSessions', sessions); }
+function saveHistory(){ store.set('breathingStats', stats); store.set('breathingSessions', sessions); histVersion++; }
 const totalSessions = () => Object.values(stats).reduce((a, s) => a + s.sessions, 0);
 function recordSession(mode, min){
   const now = new Date(), d = dayKey(now);
@@ -479,10 +482,10 @@ function applyLook(force){
   document.body.classList.toggle('tinta', l === 'tinta');
   document.querySelector('meta[name="theme-color"]').content = PAPER[l];
   native.barStyle(l);
-  ink.tint();
+  ink.look(l);
 }
 
-/* ---------- el ensō: mapas de bits ya pintados, teñidos y revelados con el pincel ---------- */
+/* ---------- el ensō: imágenes ya pintadas (img/) que el pincel va descubriendo ---------- */
 /* Misma forma que scripts/ink-recipes.js: empieza arriba, a las 12, y gira como las agujas del reloj. */
 const E = {cx:150, cy:150, R:106, start:277, sweep:332, rot:-7, N:420};
 function center(t){
@@ -495,59 +498,27 @@ function center(t){
   return [E.cx + x0 * c - y0 * s, E.cy + x0 * s + y0 * c];
 }
 const screen = $('#screen'), circle = $('#circle'), word = $('#word'), dots = $('#dots'), sealSlot = $('#sealSlot');
-const guideCv = $('#guide'), washCv = $('#wash'), paintCv = $('#paint'), veil = $('#veil');
+const guideEl = $('#guide'), washEl = $('#wash'), paintEl = $('#paint'), veil = $('#veil');
 
+/* El pincel: el ensō ya pintado (imagen) se descubre con una máscara que sigue el trazo,
+   como en la maqueta. Solo cambia el desplazamiento de la línea de la máscara. */
+const revPath = $('#revPath'), ensoImg = $('#ensoImg');
 const ink = {
-  masks:null, px:0, washPx:0, tinted:null, key:'', path:null, len:0, shown:-1, anim:0,
-  async load(){
-    const img = src => new Promise((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = ko; i.src = src; });
-    try { this.masks = {enso: await img('img/enso.webp'), wash: await img('img/aguada.webp')}; } catch (e){ this.masks = null; }
+  len:0, px:1, shown:-1, anim:0,
+  init(){
     const pts = []; for (let i = 0; i <= E.N; i += 2) pts.push(center(i / E.N));
-    this.path = new Path2D(); pts.forEach((p, i) => i ? this.path.lineTo(p[0], p[1]) : this.path.moveTo(p[0], p[1]));
-    this.len = 0; for (let i = 1; i < pts.length; i++) this.len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
-    this.size(); this.tint(true);
+    revPath.setAttribute('d', 'M' + pts.map(p => f2(p[0]) + ' ' + f2(p[1])).join('L'));
+    this.len = revPath.getTotalLength();
+    revPath.style.strokeDasharray = `${f2(this.len)} ${f2(this.len + 60)}`;
+    this.size(); this.reveal(0);
   },
-  size(){
-    const css = circle.getBoundingClientRect().width || 300, dpr = Math.min(window.devicePixelRatio || 1, 3);
-    const px = Math.round(css * dpr), wpx = Math.min(600, Math.round(css * 0.66 * 1.04 * dpr));
-    if (px === this.px && wpx === this.washPx) return false;
-    this.px = px; this.washPx = wpx;
-    guideCv.width = guideCv.height = paintCv.width = paintCv.height = px;
-    washCv.width = washCv.height = wpx;
-    return true;
-  },
-  tint(force){
-    if (!this.masks) return;
-    const key = lookNow + ':' + this.px + ':' + this.washPx;
-    if (key === this.key && !force) return;
-    this.key = key;
-    const paint = (mask, size) => {
-      const c = document.createElement('canvas'); c.width = c.height = size;
-      const x = c.getContext('2d'); x.drawImage(mask, 0, 0, size, size);
-      x.globalCompositeOperation = 'source-in'; x.fillStyle = INK[lookNow] || INK.papel; x.fillRect(0, 0, size, size);
-      return c;
-    };
-    this.tinted = paint(this.masks.enso, this.px);
-    const g = guideCv.getContext('2d'); g.clearRect(0, 0, this.px, this.px); g.drawImage(this.tinted, 0, 0);
-    const w = washCv.getContext('2d'); w.clearRect(0, 0, this.washPx, this.washPx); w.drawImage(paint(this.masks.wash, this.washPx), 0, 0);
-    const p = this.shown; this.shown = -1; this.reveal(Math.max(0, p));
-  },
-  reveal(p){                                               // pinta el ensō hasta la fracción p
-    const px = this.px;
-    if (!this.tinted || (Math.abs(p - this.shown) * this.len * px / 300 < 0.6 && p !== 0 && p !== 1)) return;
+  look(l){ guideEl.src = `img/enso-${l}.webp`; washEl.src = `img/aguada-${l}.webp`; ensoImg.setAttribute('href', `img/enso-${l}.webp`); },
+  size(){ this.px = (circle.getBoundingClientRect().width || 300) * (window.devicePixelRatio || 1); },   // píxeles reales del círculo
+  reveal(p){                                               // descubre el ensō hasta la fracción p
+    if (Math.abs(p - this.shown) * this.len * this.px / 300 < 0.6 && p !== 0 && p !== 1) return;
     this.shown = p;
-    const x = paintCv.getContext('2d');
-    x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-over'; x.clearRect(0, 0, px, px);
-    if (p <= 0) return;
-    const k = px / 300;
-    x.setTransform(k, 0, 0, k, 0, 0);
-    x.lineWidth = 38; x.lineCap = 'round'; x.lineJoin = 'round'; x.strokeStyle = '#000';
-    x.setLineDash([Math.max(0.01, this.len * Math.min(1, p)), this.len * 2]);
-    x.stroke(this.path);
-    x.setLineDash([]); x.setTransform(1, 0, 0, 1, 0, 0);
-    x.globalCompositeOperation = 'source-in';
-    x.drawImage(this.tinted, 0, 0, px, px);
-    x.globalCompositeOperation = 'source-over';
+    paintEl.style.visibility = p <= 0 ? 'hidden' : 'visible';
+    revPath.style.strokeDashoffset = f2(this.len * (1 - Math.min(1, p)));
   },
   animateTo(to, ms, done){                                 // el pincel termina el círculo
     cancelAnimationFrame(this.anim);
@@ -767,7 +738,7 @@ function start(){
   ensureAudio();
   S.total = plannedTotal(); S.elapsed = 0; S.lead = 2.2; S.phase = -1; S.sec = -1;
   setState('lead');
-  washCv.style.transition = 'none'; guideCv.style.opacity = '0';
+  washEl.style.transition = 'none'; guideEl.style.opacity = '0';
   sealSlot.textContent = ''; ink.reveal(0.004);
   setWord(T().ready, 'big'); dots.textContent = '';
   if (S.voice) voice.decode(S.lang).then(() => { if (S.state === 'lead') voice.say('ready'); });
@@ -797,15 +768,17 @@ function finish(natural){
   setState('done');
   setWord(T().done, 'big'); dots.textContent = '';
   if (S.voice) voice.say('done');
-  washCv.style.transition = 'opacity 1.2s ease'; washCv.style.opacity = '0';
+  washEl.style.transition = 'opacity 1.2s ease'; washEl.style.opacity = '0';
   $('#doneSum').textContent = T().doneSum(mins, modeName(S.mode), n);
   ink.animateTo(1, natural ? 400 : 1100, () => setTimeout(stamp, 250));
   vibrate('done');
   stopAmbient(natural ? 4 : 2.5); keepAwake(false); audioRestSoon(5000);
   calView = null;
 }
+function whenIdle(fn){ (window.requestIdleCallback || (f => setTimeout(f, 800)))(fn, {timeout:3000}); }
 function stamp(){
   if (S.state !== 'done') return;
+  whenIdle(renderCalendar);
   const d = new Date();
   sealSlot.innerHTML = sealSVG({big:String(d.getDate()), small:monthShort(d), rot:-6, seed:0, cls:'stamp'});
   vibrate('stamp');
@@ -813,12 +786,12 @@ function stamp(){
 function reset(then){
   loop(false); cancelAnimationFrame(ink.anim);
   setState('idle'); S.phase = -1; S.sec = -1; S.elapsed = 0; S.lead = 0;
-  washCv.style.transition = 'opacity .6s ease'; washCv.style.opacity = '0';
-  paintCv.style.transition = 'opacity .6s ease'; paintCv.style.opacity = '0';
+  washEl.style.transition = 'opacity .6s ease'; washEl.style.opacity = '0';
+  paintEl.style.transition = 'opacity .6s ease'; paintEl.style.opacity = '0';
   sealSlot.style.transition = 'opacity .6s ease'; sealSlot.style.opacity = '0';
   setWord(T().hint, 'hint'); dots.textContent = '';
   setTimeout(() => {
-    ink.reveal(0); paintCv.style.opacity = ''; sealSlot.textContent = ''; sealSlot.style.opacity = ''; guideCv.style.opacity = '';
+    ink.reveal(0); paintEl.style.opacity = ''; sealSlot.textContent = ''; sealSlot.style.opacity = ''; guideEl.style.opacity = '';
     applyLook();
     if (then) then();
   }, 650);
@@ -850,8 +823,8 @@ function render(now){
   else if (i === 1) s = 1 + (sTop - 1) * ease(f);          // la tinta sigue abriéndose mientras retienes
   else if (i === 2) s = sMin + ((p[1] ? sTop : 1) - sMin) * (1 - ease(f));
   else s = sMin;
-  washCv.style.transform = `scale(${s.toFixed(4)}) rotate(${((now / 1000 * 4) % 360).toFixed(2)}deg)`;
-  washCv.style.opacity = st === 'lead' ? (Math.min(1, (2.2 - S.lead) / 1.2) * 0.6).toFixed(3) : (0.55 + 0.45 * (s - sMin) / (1 - sMin)).toFixed(3);
+  washEl.style.transform = `scale(${s.toFixed(4)}) rotate(${((now / 1000 * 4) % 360).toFixed(2)}deg)`;
+  washEl.style.opacity = st === 'lead' ? (Math.min(1, (2.2 - S.lead) / 1.2) * 0.6).toFixed(3) : (0.55 + 0.45 * (s - sMin) / (1 - sMin)).toFixed(3);
   if (st === 'running'){
     if (i !== S.phase){ S.phase = i; S.sec = -1; setWord(T().ph[i], 'big'); buildDots(p[i]); vibrate(i); voice.say(PHASE_VOICE[i]); }
     const sec = Math.min(p[i], Math.floor(pos) + 1);
@@ -920,10 +893,13 @@ function renderSettings(){
     + `</div></div>`).join('');
 }
 
-let calView = null;                                         // mes que se está viendo en "sellos"
+let calView = null, calKey = '', histVersion = 0;         // mes que se está viendo en "sellos"
 function renderCalendar(){
   const t = T(), now = new Date();
   if (!calView) calView = {y:now.getFullYear(), m:now.getMonth()};
+  const key = [calView.y, calView.m, S.lang, dayKey(now), histVersion].join('|');
+  if (key === calKey) return;                              // ya está pintado: abrir la hoja no rehace nada
+  calKey = key;
   const {y, m} = calView, isNow = y === now.getFullYear() && m === now.getMonth(), today = now.getDate();
   const startDow = (new Date(y, m, 1).getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
   const prefix = `${y}-${String(m + 1).padStart(2, '0')}-`;
@@ -981,11 +957,10 @@ async function exportData(){
   const [inhale, hold, exhale, holdEmpty] = MODES.custom.p;
   const data = {app:'respiracion-pro', version:2, exportDate:new Date().toISOString(), stats, sessions, customPattern:{inhale, hold, exhale, holdEmpty}};
   const json = JSON.stringify(data, null, 2), name = `respiracion-${dayKey(new Date())}.json`;
-  const FS = native.plugin('Filesystem'), SH = native.plugin('Share');
-  if (FS && SH){                                            // en el móvil: se comparte el archivo (Drive, correo…)
+  const SH = native.plugin('Share');
+  if (SH){                                                  // en el móvil: menú de compartir (Drive, correo, notas…)
     try {
-      const r = await FS.writeFile({path:name, data:json, directory:'CACHE', encoding:'utf8'});
-      await SH.share({title:name, files:[r.uri], dialogTitle:T().exportL});
+      await SH.share({title:name, text:json, dialogTitle:T().exportL});
       note(T().exported);
     } catch (e){
       if (!/cancel/i.test(String(e && (e.message || e)))) note(T().exportError);
@@ -1157,17 +1132,18 @@ document.addEventListener('visibilitychange', () => {
 });
 setInterval(() => { renderDate(); if (S.state === 'idle') applyLook(); }, 60000);
 let resizeTimer = 0;
-window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (ink.size()) ink.tint(true); }, 150); });
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => ink.size(), 150); });
 
 /* ---------- arranque ---------- */
 loadPrefs(); loadHistory();
 screen.style.setProperty('--brush', 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 8" preserveAspectRatio="none"><path d="M2.5 4.4C22 2.3 58 2.2 97.6 3.1c1.6.1 1.5 1.1.1 1.2C60 4.9 27 5.7 3.4 6.6 1.2 6.7.6 4.7 2.5 4.4z"/></svg>') + '")');
 document.querySelectorAll('.sheet').forEach((el, i) => deckle(el, 7 + i));
 applyTexts();
+ink.init();
 applyLook(true);
-ink.load();
 native.insets();
 native.backButton();
+whenIdle(renderCalendar);
 if (S.voice) voice.fetchLang(S.lang);
 if ('serviceWorker' in navigator){
   if (native.on){                                          // en la app no hace falta: se sirven los archivos del propio móvil
