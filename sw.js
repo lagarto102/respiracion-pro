@@ -1,5 +1,6 @@
-// Respiración Pro - Service Worker v4.0 (rediseño bioluminiscencia circadiana + alemán)
-const CACHE_NAME = 'respiracion-pro-v4.0';
+// Respiración Pro - Service Worker v5.0 (rediseño papel y tinta + voz grabada)
+// Solo se usa si la app se abre desde la web; dentro de la app de Android no se registra.
+const CACHE_NAME = 'respiracion-pro-v5.0';
 const OFFLINE_URL = './index.html';
 
 // Archivos a cachear para funcionamiento offline
@@ -17,7 +18,32 @@ const ASSETS_TO_CACHE = [
   './icons/icon-384.png',
   './icons/icon-512.png',
   './icons/icon-maskable-192.png',
-  './icons/icon-maskable-512.png'
+  './icons/icon-maskable-512.png',
+  './fonts/eb-garamond-latin-400-normal.woff2',
+  './fonts/eb-garamond-latin-400-italic.woff2',
+  './fonts/eb-garamond-latin-500-normal.woff2',
+  './img/papel.webp',
+  './img/tinta.webp',
+  './img/enso.webp',
+  './img/aguada.webp',
+  './audio/voz/es/ready.ogg',
+  './audio/voz/es/inhale.ogg',
+  './audio/voz/es/hold.ogg',
+  './audio/voz/es/exhale.ogg',
+  './audio/voz/es/rest.ogg',
+  './audio/voz/es/done.ogg',
+  './audio/voz/en/ready.ogg',
+  './audio/voz/en/inhale.ogg',
+  './audio/voz/en/hold.ogg',
+  './audio/voz/en/exhale.ogg',
+  './audio/voz/en/rest.ogg',
+  './audio/voz/en/done.ogg',
+  './audio/voz/de/ready.ogg',
+  './audio/voz/de/inhale.ogg',
+  './audio/voz/de/hold.ogg',
+  './audio/voz/de/exhale.ogg',
+  './audio/voz/de/rest.ogg',
+  './audio/voz/de/done.ogg'
 ];
 
 // Instalación del Service Worker

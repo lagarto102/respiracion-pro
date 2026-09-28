@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- color de arranque: tinta (modo oscuro del móvil) -->
+    <color name="splash_background">#1A1B17</color>
+</resources>
