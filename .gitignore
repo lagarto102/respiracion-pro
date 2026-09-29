@@ -11,3 +11,4 @@ android/app/*.jks
 *.iml
 .DS_Store
 
+__pycache__/

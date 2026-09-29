@@ -4,7 +4,7 @@ import path from 'node:path';
 const root = process.cwd();
 const outDir = path.join(root, 'www');
 const files = ['index.html', 'privacy.html', 'manifest.json', 'sw.js'];
-const dirs = ['icons'];
+const dirs = ['icons', 'fonts', 'img', 'audio'];
 
 await mkdir(outDir, { recursive: true });
 

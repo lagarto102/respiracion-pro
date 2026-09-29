@@ -3,5 +3,7 @@
     <color name="colorPrimary">#4A9C7E</color>
     <color name="colorPrimaryDark">#0A0F14</color>
     <color name="colorAccent">#C9A962</color>
+    <!-- color de arranque: papel (modo claro del móvil) -->
+    <color name="splash_background">#F1EADC</color>
 </resources>
 
